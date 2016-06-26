@@ -8,11 +8,11 @@
       var id = msg[0];
       var value = msg[1];
 
-      var f = function(value, done) {
-        done(value * 10);
+      var f = function(args, done) {
+        eval(value.script);
       }
 
-      f(value, function(data) {
+      f(value.args, function(data) {
         input.send([id, data]);
       });
     });

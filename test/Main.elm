@@ -11,8 +11,9 @@ import TaskSim.App as TaskSim
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 
-type alias Json = Encode.Value
+import Lib
 
+type alias Json = Encode.Value
 
 main =
   TaskSim.program input output
@@ -37,20 +38,6 @@ type Msg
 type alias Model = String
 
 
-decode : Json -> Result String Int
-decode data =
-  let
-    decoder =
-      Decode.int `Decode.andThen` \i ->
-        if i >= 0 then Decode.succeed i else Decode.fail "something is wrong"
-  in
-    Decode.decodeValue decoder data
-
-
-task : Int -> PortTask String Int
-task i = PortTask.create (Encode.int i) decode
-
-
 init : (Model, Cmd Msg)
 init = ("", Cmd.none)
 
@@ -59,7 +46,13 @@ update : Msg -> Model -> (Model, Cmd Msg, PortCmd Msg)
 update msg model =
   case Debug.log "msg" msg of
     Click ->
-      (model, Cmd.none, PortTask.perform Error GotValue (task 3 `PortTask.andThen` \i -> task i ))
+      ( model
+      , Cmd.none
+      , PortTask.perform
+          Error
+          GotValue
+          (Lib.get10xValue 3 `PortTask.andThen` \i -> Lib.get10xValue i )
+      )
 
     GotValue i ->
       (("got: " ++ toString i), Cmd.none, PortCmd.none)
