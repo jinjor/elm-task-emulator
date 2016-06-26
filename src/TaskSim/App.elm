@@ -26,6 +26,7 @@ type alias Input msg = ((Int, Json) -> msg) -> Sub msg
 type alias Output msg = (Int, Json) -> Cmd msg
 
 
+
 program :
      (((Int, Json) -> (Msg msg)) -> Sub (Msg msg))
   -> ((Int, Json) -> Cmd msg)
@@ -54,7 +55,7 @@ program input output { init, update, subscriptions, view } =
           update m model.userModel
 
         (cmd2, newManager) =
-          portCmd model.effectManager
+          execPortCmd portCmd model.effectManager
       in
         { model
         | userModel = newUserModel

@@ -16,8 +16,9 @@ type EffectManager msg =
     }
 
 
-type alias PortCmd msg =
-  EffectManager msg -> (Cmd msg, EffectManager msg)
+type PortCmd msg
+  = Simple (Cmd msg)
+  | Callback Json (Json -> PortTask msg msg)
 
 
 init : ((Int, Json) -> Cmd msg) -> EffectManager msg
@@ -30,35 +31,44 @@ init output =
 
 
 perform : (e -> msg) -> (a -> msg) -> PortTask e a -> PortCmd msg
-perform transformErr transform task = \(Manager { id, tasks, toCmd }) ->
-  let
-    (cmd, nextTasks, newId) =
-      case task of
-        PortTask.Task { data, decode } ->
-          ( toCmd (id, data)
-          , let
-              f json =
-                PortTask.map transform <|
-                PortTask.mapError transformErr <|
-                decode json
-            in
-              Dict.insert id f tasks
-          , id + 1
-          )
-        PortTask.Succeed a ->
-          (Task.perform transformErr transform (Task.succeed a), tasks, id)
-        PortTask.Fail e ->
-          (Task.perform transformErr transform (Task.fail e), tasks, id)
-  in
-    ( cmd
-    , Manager { id = newId, tasks = nextTasks, toCmd = toCmd }
-    )
+perform transformErr transform task =
+  case task of
+    PortTask.Task { data, decode } ->
+      Callback data
+        (\json ->
+          PortTask.map transform <|
+          PortTask.mapError transformErr <|
+          decode json
+        )
+    PortTask.Succeed a ->
+      Simple (Task.perform transformErr transform (Task.succeed a))
+    PortTask.Fail e ->
+      Simple (Task.perform transformErr transform (Task.fail e))
+
+
+execPortCmd : PortCmd msg -> EffectManager msg -> (Cmd msg, EffectManager msg)
+execPortCmd portCmd (Manager man) =
+  case portCmd of
+    Simple cmd ->
+      ( cmd, Manager man )
+    Callback data jsonToTask ->
+      ( man.toCmd (man.id, data)
+      , Manager
+        { id = man.id + 1
+        , tasks = Dict.insert man.id jsonToTask man.tasks
+        , toCmd = man.toCmd
+        }
+      )
 
 
 transformInput : (Int, Json) -> EffectManager msg -> (Cmd msg, EffectManager msg)
-transformInput (id, json) ((Manager { tasks }) as manager) =
-  case Dict.get id tasks of
+transformInput (id, json) ((Manager man) as manager) =
+  case Dict.get id man.tasks of
     Just decode ->
-      perform identity identity (decode json) manager
+      let
+        (cmd, newManager) =
+          execPortCmd (perform identity identity (decode json)) manager
+      in
+        (cmd, newManager)
     Nothing ->
       (Cmd.none, manager)
