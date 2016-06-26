@@ -1,0 +1,11 @@
+<body>
+<script src="script.js"></script>
+<script>
+  var app = Elm.Main.fullscreen();
+  app.ports.output.subscribe(function(msg) {
+    var id = msg[0];
+    var value = msg[1];
+    app.ports.input.send([id, 5]);
+  });
+</script>
+</body>
