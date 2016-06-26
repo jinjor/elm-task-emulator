@@ -1,4 +1,4 @@
-module TaskSim.App exposing (program)
+module TaskSim.App exposing (Input, Output, program)
 
 import Html exposing (Html)
 import Html.App as App
@@ -21,11 +21,16 @@ type alias Model model msg =
   }
 
 
+type alias Input msg = ((Int, Json) -> msg) -> Sub msg
+
+type alias Output msg = (Int, Json) -> Cmd msg
+
+
 program :
      (((Int, Json) -> (Msg msg)) -> Sub (Msg msg))
   -> ((Int, Json) -> Cmd msg)
   -> { init : (model, Cmd msg)
-     , update : EffectManager msg -> msg -> model -> (model, Cmd msg, EffectManager msg)
+     , update : msg -> model -> (model, Cmd msg, PortCmd msg)
      , subscriptions : model -> Sub msg
      , view : model -> Html msg
      }
@@ -45,13 +50,16 @@ program input output { init, update, subscriptions, view } =
 
     updateHelp m model =
       let
-        (newUserModel, cmd, newManager) =
-          update model.effectManager m model.userModel
+        (newUserModel, cmd, portCmd) =
+          update m model.userModel
+
+        (cmd2, newManager) =
+          portCmd model.effectManager
       in
         { model
         | userModel = newUserModel
         , effectManager = newManager
-        } ! [ Cmd.map UserMsg cmd ]
+        } ! [ Cmd.map UserMsg cmd, Cmd.map UserMsg cmd2 ]
 
     update' msg model =
       case msg of

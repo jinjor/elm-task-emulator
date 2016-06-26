@@ -3,11 +3,10 @@ port module Main exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 
-import TaskSim.EffectManager as EffectManager exposing (EffectManager)
 import TaskSim.PortTask as PortTask exposing (PortTask)
+import TaskSim.PortCmd as PortCmd exposing (PortCmd)
 
-
-import TaskSim.App
+import TaskSim.App as TaskSim
 
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
@@ -16,7 +15,7 @@ type alias Json = Encode.Value
 
 
 main =
-  TaskSim.App.program input output
+  TaskSim.program input output
     { init = init
     , update = update
     , subscriptions = subscriptions
@@ -24,9 +23,9 @@ main =
     }
 
 
-port input : ((Int, Json) -> msg) -> Sub msg
+port input : TaskSim.Input msg
 
-port output : (Int, Json) -> Cmd msg
+port output : TaskSim.Output msg
 
 
 type Msg
@@ -49,28 +48,24 @@ decode data =
 
 
 task : Int -> PortTask String Int
-task i = PortTask.map ((*) i) <| PortTask.init Encode.null decode
+task i = PortTask.create (Encode.int i) decode
 
 
 init : (Model, Cmd Msg)
 init = ("", Cmd.none)
 
 
-update : EffectManager Msg -> Msg -> Model -> (Model, Cmd Msg, EffectManager Msg)
-update manager msg model =
-  case msg of
+update : Msg -> Model -> (Model, Cmd Msg, PortCmd Msg)
+update msg model =
+  case Debug.log "msg" msg of
     Click ->
-      let
-        (cmd, manager) =
-          EffectManager.perform manager Error GotValue (task 3 `PortTask.andThen` \i -> task i )
-      in
-        (model, cmd, manager)
+      (model, Cmd.none, PortTask.perform Error GotValue (task 3 `PortTask.andThen` \i -> task i ))
 
     GotValue i ->
-      (("got: " ++ toString i), Cmd.none, manager)
+      (("got: " ++ toString i), Cmd.none, PortCmd.none)
 
     Error s ->
-      ("error: " ++ s, Cmd.none, manager)
+      ("error: " ++ s, Cmd.none, PortCmd.none)
 
 
 subscriptions : Model -> Sub Msg

@@ -7,7 +7,9 @@
         "src"
     ],
     "exposed-modules": [
-
+        "TaskSim.App",
+        "TaskSim.PortTask",
+        "TaskSim.PortCmd"
     ],
     "dependencies": {
         "elm-lang/core": "4.0.1 <= v < 5.0.0",

@@ -2,10 +2,22 @@
 <script src="script.js"></script>
 <script>
   var app = Elm.Main.fullscreen();
-  app.ports.output.subscribe(function(msg) {
-    var id = msg[0];
-    var value = msg[1];
-    app.ports.input.send([id, 5]);
-  });
+  function setupSim(input, output) {
+
+    output.subscribe(function(msg) {
+      var id = msg[0];
+      var value = msg[1];
+
+      var f = function(value, done) {
+        done(value * 10);
+      }
+
+      f(value, function(data) {
+        input.send([id, data]);
+      });
+    });
+  }
+  setupSim(app.ports.input, app.ports.output)
+
 </script>
 </body>

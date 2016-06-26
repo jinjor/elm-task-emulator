@@ -1,60 +1,45 @@
-module TaskSim.PortTask exposing (..)
+module TaskSim.PortTask exposing
+  ( PortTask
+  , create
+  , succeed
+  , fail
+  , map
+  , mapError
+  , andThen
+  , perform
+  )
 
 import Json.Decode as Decode exposing (Decoder)
+import TaskSim.PortTaskInternal as T
+import TaskSim.EffectManager as EM
 
 type alias Json = Decode.Value
 
-type PortTask e a =
-  PortTask
-    { data : Json
-    , decode : Json -> PortTask e a
-    }
-  | Succeed a
-  | Fail e
+type alias PortTask e a = T.PortTask e a
 
-
-init : Json -> (Json -> Result e a) -> PortTask e a
-init data decode =
-  PortTask
-    { data = data
-    , decode =
-      (\j -> case decode j of
-        Ok a -> Succeed a
-        Err e -> Fail e
-      )
-    }
+create : Json -> (Json -> Result e a) -> PortTask e a
+create = T.create
 
 
 succeed : a -> PortTask e a
-succeed = Succeed
+succeed = T.succeed
 
 
 fail : e -> PortTask e a
-fail = Fail
+fail = T.Fail
 
 
 map : (a -> b) -> PortTask e a -> PortTask e b
-map f task =
-  case task of
-    PortTask { data, decode } ->
-      PortTask { data = data, decode = (map f) << decode }
-    Succeed a -> Succeed (f a)
-    Fail e -> Fail e
+map = T.map
 
 
 mapError : (e1 -> e2) -> PortTask e1 a -> PortTask e2 a
-mapError f task =
-  case task of
-    PortTask { data, decode } ->
-      PortTask { data = data, decode = (mapError f) << decode }
-    Succeed a -> Succeed a
-    Fail e -> Fail (f e)
+mapError = T.mapError
 
 
 andThen : PortTask e a -> (a -> PortTask e b) -> PortTask e b
-andThen task f =
-  case task of
-    PortTask { data, decode } ->
-      PortTask { data = data, decode = (flip andThen f) << decode }
-    Succeed a -> f a
-    Fail e -> Fail e
+andThen = T.andThen
+
+
+perform : (e -> msg) -> (a -> msg) -> PortTask e a -> EM.PortCmd msg
+perform = EM.perform

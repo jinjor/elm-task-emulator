@@ -7100,88 +7100,88 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$TaskSim_PortTask$Fail = function (a) {
+var _user$project$TaskSim_PortTaskInternal$Fail = function (a) {
 	return {ctor: 'Fail', _0: a};
 };
-var _user$project$TaskSim_PortTask$fail = _user$project$TaskSim_PortTask$Fail;
-var _user$project$TaskSim_PortTask$Succeed = function (a) {
+var _user$project$TaskSim_PortTaskInternal$fail = _user$project$TaskSim_PortTaskInternal$Fail;
+var _user$project$TaskSim_PortTaskInternal$Succeed = function (a) {
 	return {ctor: 'Succeed', _0: a};
 };
-var _user$project$TaskSim_PortTask$succeed = _user$project$TaskSim_PortTask$Succeed;
-var _user$project$TaskSim_PortTask$PortTask = function (a) {
-	return {ctor: 'PortTask', _0: a};
+var _user$project$TaskSim_PortTaskInternal$succeed = _user$project$TaskSim_PortTaskInternal$Succeed;
+var _user$project$TaskSim_PortTaskInternal$Task = function (a) {
+	return {ctor: 'Task', _0: a};
 };
-var _user$project$TaskSim_PortTask$init = F2(
+var _user$project$TaskSim_PortTaskInternal$create = F2(
 	function (data, decode) {
-		return _user$project$TaskSim_PortTask$PortTask(
+		return _user$project$TaskSim_PortTaskInternal$Task(
 			{
 				data: data,
 				decode: function (j) {
 					var _p0 = decode(j);
 					if (_p0.ctor === 'Ok') {
-						return _user$project$TaskSim_PortTask$Succeed(_p0._0);
+						return _user$project$TaskSim_PortTaskInternal$Succeed(_p0._0);
 					} else {
-						return _user$project$TaskSim_PortTask$Fail(_p0._0);
+						return _user$project$TaskSim_PortTaskInternal$Fail(_p0._0);
 					}
 				}
 			});
 	});
-var _user$project$TaskSim_PortTask$map = F2(
+var _user$project$TaskSim_PortTaskInternal$map = F2(
 	function (f, task) {
 		var _p1 = task;
 		switch (_p1.ctor) {
-			case 'PortTask':
-				return _user$project$TaskSim_PortTask$PortTask(
+			case 'Task':
+				return _user$project$TaskSim_PortTaskInternal$Task(
 					{
 						data: _p1._0.data,
 						decode: function (_p2) {
 							return A2(
-								_user$project$TaskSim_PortTask$map,
+								_user$project$TaskSim_PortTaskInternal$map,
 								f,
 								_p1._0.decode(_p2));
 						}
 					});
 			case 'Succeed':
-				return _user$project$TaskSim_PortTask$Succeed(
+				return _user$project$TaskSim_PortTaskInternal$Succeed(
 					f(_p1._0));
 			default:
-				return _user$project$TaskSim_PortTask$Fail(_p1._0);
+				return _user$project$TaskSim_PortTaskInternal$Fail(_p1._0);
 		}
 	});
-var _user$project$TaskSim_PortTask$mapError = F2(
+var _user$project$TaskSim_PortTaskInternal$mapError = F2(
 	function (f, task) {
 		var _p3 = task;
 		switch (_p3.ctor) {
-			case 'PortTask':
-				return _user$project$TaskSim_PortTask$PortTask(
+			case 'Task':
+				return _user$project$TaskSim_PortTaskInternal$Task(
 					{
 						data: _p3._0.data,
 						decode: function (_p4) {
 							return A2(
-								_user$project$TaskSim_PortTask$mapError,
+								_user$project$TaskSim_PortTaskInternal$mapError,
 								f,
 								_p3._0.decode(_p4));
 						}
 					});
 			case 'Succeed':
-				return _user$project$TaskSim_PortTask$Succeed(_p3._0);
+				return _user$project$TaskSim_PortTaskInternal$Succeed(_p3._0);
 			default:
-				return _user$project$TaskSim_PortTask$Fail(
+				return _user$project$TaskSim_PortTaskInternal$Fail(
 					f(_p3._0));
 		}
 	});
-var _user$project$TaskSim_PortTask$andThen = F2(
+var _user$project$TaskSim_PortTaskInternal$andThen = F2(
 	function (task, f) {
 		var _p5 = task;
 		switch (_p5.ctor) {
-			case 'PortTask':
-				return _user$project$TaskSim_PortTask$PortTask(
+			case 'Task':
+				return _user$project$TaskSim_PortTaskInternal$Task(
 					{
 						data: _p5._0.data,
 						decode: function (_p6) {
 							return A3(
 								_elm_lang$core$Basics$flip,
-								_user$project$TaskSim_PortTask$andThen,
+								_user$project$TaskSim_PortTaskInternal$andThen,
 								f,
 								_p5._0.decode(_p6));
 						}
@@ -7189,7 +7189,7 @@ var _user$project$TaskSim_PortTask$andThen = F2(
 			case 'Succeed':
 				return f(_p5._0);
 			default:
-				return _user$project$TaskSim_PortTask$Fail(_p5._0);
+				return _user$project$TaskSim_PortTaskInternal$Fail(_p5._0);
 		}
 	});
 
@@ -7201,7 +7201,7 @@ var _user$project$TaskSim_EffectManager$init = function (output) {
 		{id: 0, tasks: _elm_lang$core$Dict$empty, toCmd: output});
 };
 var _user$project$TaskSim_EffectManager$perform = F4(
-	function (_p0, transformErr, transform, task) {
+	function (transformErr, transform, task, _p0) {
 		var _p1 = _p0;
 		var _p6 = _p1._0.toCmd;
 		var _p5 = _p1._0.tasks;
@@ -7209,7 +7209,7 @@ var _user$project$TaskSim_EffectManager$perform = F4(
 		var _p2 = function () {
 			var _p3 = task;
 			switch (_p3.ctor) {
-				case 'PortTask':
+				case 'Task':
 					return {
 						ctor: '_Tuple3',
 						_0: _p6(
@@ -7217,10 +7217,10 @@ var _user$project$TaskSim_EffectManager$perform = F4(
 						_1: function () {
 							var f = function (json) {
 								return A2(
-									_user$project$TaskSim_PortTask$map,
+									_user$project$TaskSim_PortTaskInternal$map,
 									transform,
 									A2(
-										_user$project$TaskSim_PortTask$mapError,
+										_user$project$TaskSim_PortTaskInternal$mapError,
 										transformErr,
 										_p3._0.decode(json)));
 							};
@@ -7271,14 +7271,26 @@ var _user$project$TaskSim_EffectManager$transformInput = F2(
 		if (_p11.ctor === 'Just') {
 			return A4(
 				_user$project$TaskSim_EffectManager$perform,
-				_p12,
 				_elm_lang$core$Basics$identity,
 				_elm_lang$core$Basics$identity,
-				_p11._0(_p9._1));
+				_p11._0(_p9._1),
+				_p12);
 		} else {
 			return {ctor: '_Tuple2', _0: _elm_lang$core$Platform_Cmd$none, _1: _p12};
 		}
 	});
+
+var _user$project$TaskSim_PortTask$perform = _user$project$TaskSim_EffectManager$perform;
+var _user$project$TaskSim_PortTask$andThen = _user$project$TaskSim_PortTaskInternal$andThen;
+var _user$project$TaskSim_PortTask$mapError = _user$project$TaskSim_PortTaskInternal$mapError;
+var _user$project$TaskSim_PortTask$map = _user$project$TaskSim_PortTaskInternal$map;
+var _user$project$TaskSim_PortTask$fail = _user$project$TaskSim_PortTaskInternal$Fail;
+var _user$project$TaskSim_PortTask$succeed = _user$project$TaskSim_PortTaskInternal$succeed;
+var _user$project$TaskSim_PortTask$create = _user$project$TaskSim_PortTaskInternal$create;
+
+var _user$project$TaskSim_PortCmd$none = function (a) {
+	return {ctor: '_Tuple2', _0: _elm_lang$core$Platform_Cmd$none, _1: a};
+};
 
 var _user$project$TaskSim_App$Model = F2(
 	function (a, b) {
@@ -7314,10 +7326,13 @@ var _user$project$TaskSim_App$program = F3(
 		};
 		var updateHelp = F2(
 			function (m, model) {
-				var _p4 = A3(_p1.update, model.effectManager, m, model.userModel);
+				var _p4 = A2(_p1.update, m, model.userModel);
 				var newUserModel = _p4._0;
 				var cmd = _p4._1;
-				var newManager = _p4._2;
+				var portCmd = _p4._2;
+				var _p5 = portCmd(model.effectManager);
+				var cmd2 = _p5._0;
+				var newManager = _p5._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -7325,22 +7340,23 @@ var _user$project$TaskSim_App$program = F3(
 						{userModel: newUserModel, effectManager: newManager}),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							A2(_elm_lang$core$Platform_Cmd$map, _user$project$TaskSim_App$UserMsg, cmd)
+							A2(_elm_lang$core$Platform_Cmd$map, _user$project$TaskSim_App$UserMsg, cmd),
+							A2(_elm_lang$core$Platform_Cmd$map, _user$project$TaskSim_App$UserMsg, cmd2)
 						]));
 			});
 		var update$ = F2(
 			function (msg, model) {
-				var _p5 = msg;
-				switch (_p5.ctor) {
+				var _p6 = msg;
+				switch (_p6.ctor) {
 					case 'UserMsg':
-						return A2(updateHelp, _p5._0, model);
+						return A2(updateHelp, _p6._0, model);
 					case 'Input':
-						var _p6 = A2(
+						var _p7 = A2(
 							_user$project$TaskSim_EffectManager$transformInput,
-							{ctor: '_Tuple2', _0: _p5._0._0, _1: _p5._0._1},
+							{ctor: '_Tuple2', _0: _p6._0._0, _1: _p6._0._1},
 							model.effectManager);
-						var cmd = _p6._0;
-						var newManager = _p6._1;
+						var cmd = _p7._0;
+						var newManager = _p7._1;
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							_elm_lang$core$Native_Utils.update(
@@ -7360,9 +7376,9 @@ var _user$project$TaskSim_App$program = F3(
 			});
 		var manager = _user$project$TaskSim_EffectManager$init(output);
 		var init$ = function () {
-			var _p7 = _p1.init;
-			var userModel = _p7._0;
-			var cmd = _p7._1;
+			var _p8 = _p1.init;
+			var userModel = _p8._0;
+			var cmd = _p8._1;
 			return {
 				ctor: '_Tuple2',
 				_0: {userModel: userModel, effectManager: manager},
@@ -7386,12 +7402,9 @@ var _user$project$Main$decode = function (data) {
 };
 var _user$project$Main$task = function (i) {
 	return A2(
-		_user$project$TaskSim_PortTask$map,
-		F2(
-			function (x, y) {
-				return x * y;
-			})(i),
-		A2(_user$project$TaskSim_PortTask$init, _elm_lang$core$Json_Encode$null, _user$project$Main$decode));
+		_user$project$TaskSim_PortTask$create,
+		_elm_lang$core$Json_Encode$int(i),
+		_user$project$Main$decode);
 };
 var _user$project$Main$input = _elm_lang$core$Native_Platform.incomingPort(
 	'input',
@@ -7414,25 +7427,26 @@ var _user$project$Main$Error = function (a) {
 var _user$project$Main$GotValue = function (a) {
 	return {ctor: 'GotValue', _0: a};
 };
-var _user$project$Main$update = F3(
-	function (manager, msg, model) {
-		var _p0 = msg;
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p0 = A2(_elm_lang$core$Debug$log, 'msg', msg);
 		switch (_p0.ctor) {
 			case 'Click':
-				var _p1 = A4(
-					_user$project$TaskSim_EffectManager$perform,
-					manager,
-					_user$project$Main$Error,
-					_user$project$Main$GotValue,
-					A2(
-						_user$project$TaskSim_PortTask$andThen,
-						_user$project$Main$task(3),
-						function (i) {
-							return _user$project$Main$task(i);
-						}));
-				var cmd = _p1._0;
-				var manager = _p1._1;
-				return {ctor: '_Tuple3', _0: model, _1: cmd, _2: manager};
+				return {
+					ctor: '_Tuple3',
+					_0: model,
+					_1: _elm_lang$core$Platform_Cmd$none,
+					_2: A3(
+						_user$project$TaskSim_PortTask$perform,
+						_user$project$Main$Error,
+						_user$project$Main$GotValue,
+						A2(
+							_user$project$TaskSim_PortTask$andThen,
+							_user$project$Main$task(3),
+							function (i) {
+								return _user$project$Main$task(i);
+							}))
+				};
 			case 'GotValue':
 				return {
 					ctor: '_Tuple3',
@@ -7441,14 +7455,14 @@ var _user$project$Main$update = F3(
 						'got: ',
 						_elm_lang$core$Basics$toString(_p0._0)),
 					_1: _elm_lang$core$Platform_Cmd$none,
-					_2: manager
+					_2: _user$project$TaskSim_PortCmd$none
 				};
 			default:
 				return {
 					ctor: '_Tuple3',
 					_0: A2(_elm_lang$core$Basics_ops['++'], 'error: ', _p0._0),
 					_1: _elm_lang$core$Platform_Cmd$none,
-					_2: manager
+					_2: _user$project$TaskSim_PortCmd$none
 				};
 		}
 	});
