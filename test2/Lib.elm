@@ -31,6 +31,13 @@ decodeUnit _ =
   Ok ()
 
 
+decodeInt : Json -> Result x Int
+decodeInt json =
+  case Decode.decodeValue Decode.int json of
+    Ok i -> Ok i
+    _ -> Debug.crash ("not int: " ++ toString json)
+
+
 newAudioContext : PortTask x AudioContext
 newAudioContext =
   Script.create decodeContext [ ]
@@ -55,20 +62,40 @@ destination (AudioContext context) =
     "var context = args[0]; done(context.destination);"
 
 
+numberOfOutputs : AudioNode -> PortTask x Int
+numberOfOutputs = getInt ["numberOfOutputs"]
+
+
+numberOfInputs : AudioNode -> PortTask x Int
+numberOfInputs = getInt ["numberOfInputs"]
+
+
 connect : AudioNode -> AudioNode -> PortTask x ()
 connect (AudioNode src) (AudioNode dest) =
   Script.create decodeUnit [ src, dest ]
     "var src = args[0]; var dest = args[1]; src.connect(dest); done();"
 
 
-setInt : AudioNode -> List String -> Int -> PortTask x ()
-setInt (AudioNode node) at value =
+disconnect : AudioNode -> PortTask x ()
+disconnect (AudioNode node) =
+  Script.create decodeUnit [ node ]
+    "var node = args[0]; node.disconnect(); done();"
+
+
+getInt : List String -> AudioNode -> PortTask x Int
+getInt at (AudioNode node) =
+  Script.create decodeInt [ node ] <|
+    "var node = args[0]; done(node." ++ String.join "." at ++ ");"-- TODO validate
+
+
+setInt : List String -> Int -> AudioNode -> PortTask x ()
+setInt at value (AudioNode node) =
   Script.create decodeUnit [ node ] <|
     "var node = args[0]; node." ++ String.join "." at ++ " = " ++ toString value ++ "; done();"-- TODO validate
 
 
-setString : AudioNode -> List String -> String -> PortTask x ()
-setString (AudioNode node) at value =
+setString : List String -> String -> AudioNode -> PortTask x ()
+setString at value (AudioNode node) =
   Script.create decodeUnit [ node ] <|
     "var node = args[0]; node." ++ String.join "." at ++ " = '" ++ value ++ "'; done();" -- TODO validate, escape
 

@@ -35,11 +35,14 @@ type Msg
   = Init
   | Initialized (AudioContext, AudioNode, AudioNode, AudioNode)
   | Click
+  | ShowInfo
+  | Info String
   | Done
 
 type alias Model =
   { playing : Bool
   , nodes : Maybe Nodes
+  , info : String
   }
 
 type alias Nodes =
@@ -54,7 +57,7 @@ type alias Nodes =
 
 
 init : (Model, Cmd Msg)
-init = (Model False Nothing, Task.perform never identity (Task.succeed Init))
+init = (Model False Nothing "", Task.perform never identity (Task.succeed Init))
 
 
 update : Msg -> Model -> (Model, Cmd Msg, PortCmd Msg)
@@ -66,8 +69,8 @@ update msg model =
       , PortTask.perform never Initialized
           (newAudioContext >>= \context ->
            createOscillator context >>= \oscillator ->
-           setString oscillator ["type"] "square" >>= \_ ->
-           setInt oscillator ["frequency", "value"] 442 >>= \_ ->
+           setString ["type"] "square" oscillator >>= \_ ->
+           setInt ["frequency", "value"] 442 oscillator >>= \_ ->
            createGain context >>= \gain ->
            destination context >>= \dest ->
            connect oscillator gain >>= \_ ->
@@ -96,8 +99,31 @@ update msg model =
           )
         _ ->
           ( model, Cmd.none, PortCmd.none)
+    ShowInfo ->
+      let
+        portCmd =
+          case model.nodes of
+            Just { oscillator, gain, destination } ->
+              PortTask.perform never Info
+                ( numberOfInputs oscillator >>= \inputs1 ->
+                  numberOfOutputs oscillator >>= \outputs1 ->
+                  numberOfInputs gain >>= \inputs2 ->
+                  numberOfOutputs gain >>= \outputs2 ->
+                  numberOfInputs destination >>= \inputs3 ->
+                  numberOfOutputs destination >>= \outputs3 ->
+                  PortTask.succeed
+                    ( "oscillator: " ++ toString inputs1 ++ ", " ++ toString outputs1 ++ "\n" ++
+                      "gain: " ++ toString inputs2 ++ ", " ++ toString outputs2 ++ "\n" ++
+                      "destination: " ++ toString inputs3 ++ ", " ++ toString outputs3
+                    )
+                )
+            _ -> PortCmd.none
+      in
+        ( model, Cmd.none, portCmd )
+    Info s ->
+      ( { model | info = s }, Cmd.none, PortCmd.none )
     Done ->
-      ( model, Cmd.none, PortCmd.none)
+      ( model, Cmd.none, PortCmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -108,8 +134,15 @@ view : Model -> Html Msg
 view model =
   case model.nodes of
     Just _ ->
-      button
-        [ onClick Click ]
-        [ text <| if model.playing then "Stop" else "Go" ]
+      div []
+        [ button
+          [ onClick Click ]
+          [ text <| if model.playing then "Stop" else "Start" ]
+        , button
+          [ onClick ShowInfo ]
+          [ text "Info" ]
+        , pre [] [ text model.info ]
+        ]
+
     Nothing ->
       text ""
