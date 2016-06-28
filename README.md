@@ -66,6 +66,14 @@ Using `TaskEmulator.eval` in your html file is the switch that you'll allow unsa
 Otherwise, no unsafe code will be evaluated. It's just a string in the form of JavaScript code!
 
 
+## Safe or Unsafe
+
+* Putting mutable value as `Json.Value` into Elm world **=> Safe**
+* Mutating `Json.Value` **=> Safe**
+* Decoding mutable value and access to its property **=> Unsafe**
+* Applying `eval` to user input **=> Unsafe**
+
+
 ## LICENSE
 
 BSD3
