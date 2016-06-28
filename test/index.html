@@ -1,8 +1,8 @@
 <body>
 <script src="script.js"></script>
-<script src="../task-sim.js"></script>
+<script src="../task-emulator.js"></script>
 <script>
   var app = Elm.Main.fullscreen();
-  TaskSim.configure(app.ports.input, app.ports.output, TaskSim.eval);
+  TaskEmulator.configure(app.ports.input, app.ports.output, TaskEmulator.eval);
 </script>
 </body>

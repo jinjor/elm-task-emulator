@@ -3,10 +3,10 @@ port module Main exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 
-import TaskSim.PortTask as PortTask exposing (PortTask)
-import TaskSim.PortCmd as PortCmd exposing (PortCmd)
+import TaskEmulator.PortTask as PortTask exposing (PortTask)
+import TaskEmulator.PortCmd as PortCmd exposing (PortCmd)
 
-import TaskSim.App as TaskSim
+import TaskEmulator.App as TaskEmulator
 
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
@@ -16,7 +16,7 @@ import Lib
 type alias Json = Encode.Value
 
 main =
-  TaskSim.program input output
+  TaskEmulator.program input output
     { init = init
     , update = update
     , subscriptions = subscriptions
@@ -24,9 +24,9 @@ main =
     }
 
 
-port input : TaskSim.Input msg
+port input : TaskEmulator.Input msg
 
-port output : TaskSim.Output msg
+port output : TaskEmulator.Output msg
 
 
 type Msg

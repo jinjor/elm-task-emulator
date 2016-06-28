@@ -1,7 +1,7 @@
-module TaskSim.PortCmd exposing (PortCmd, none)
+module TaskEmulator.PortCmd exposing (PortCmd, none)
 
-import TaskSim.EffectManager as EM exposing (EffectManager)
-import TaskSim.PortTask as PortTask
+import TaskEmulator.EffectManager as EM exposing (EffectManager)
+import TaskEmulator.PortTask as PortTask
 
 type alias PortCmd msg = EM.PortCmd msg
 

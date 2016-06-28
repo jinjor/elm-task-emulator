@@ -1,4 +1,4 @@
-TaskSim = (function() {
+TaskEmulator = (function() {
   function configure(input, output, f) {
     output.subscribe(function(msg) {
       var id = msg[0];

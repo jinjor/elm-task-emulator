@@ -1,4 +1,4 @@
-module TaskSim.PortTaskInternal exposing (..)
+module TaskEmulator.PortTaskInternal exposing (..)
 
 import Json.Decode as Decode exposing (Decoder)
 

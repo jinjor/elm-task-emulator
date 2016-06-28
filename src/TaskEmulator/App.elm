@@ -1,11 +1,11 @@
-module TaskSim.App exposing (Input, Output, program)
+module TaskEmulator.App exposing (Input, Output, program)
 
 import Html exposing (Html)
 import Html.App as App
 
 import Json.Decode as Decode exposing (Decoder)
 
-import TaskSim.EffectManager as EffectManager exposing (..)
+import TaskEmulator.EffectManager as EffectManager exposing (..)
 
 type alias Json = Decode.Value
 

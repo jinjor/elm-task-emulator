@@ -1,8 +1,8 @@
-module TaskSim.EffectManager exposing (..)
+module TaskEmulator.EffectManager exposing (..)
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (Decoder)
-import TaskSim.PortTaskInternal as PortTask exposing (PortTask)
+import TaskEmulator.PortTaskInternal as PortTask exposing (PortTask)
 import Task
 
 type alias Json = Decode.Value

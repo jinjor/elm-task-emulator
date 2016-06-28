@@ -1,15 +1,15 @@
 {
     "version": "1.0.0",
-    "summary": "task simulation for ports",
-    "repository": "https://github.com/jinjor/elm-task-sim.git",
+    "summary": "task emulation for ports",
+    "repository": "https://github.com/jinjor/elm-task-emulator.git",
     "license": "BSD3",
     "source-directories": [
         "src"
     ],
     "exposed-modules": [
-        "TaskSim.App",
-        "TaskSim.PortTask",
-        "TaskSim.PortCmd"
+        "TaskEmulator.App",
+        "TaskEmulator.PortTask",
+        "TaskEmulator.PortCmd"
     ],
     "dependencies": {
         "elm-lang/core": "4.0.1 <= v < 5.0.0",

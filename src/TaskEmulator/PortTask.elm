@@ -1,4 +1,4 @@
-module TaskSim.PortTask exposing
+module TaskEmulator.PortTask exposing
   ( PortTask
   , create
   , succeed
@@ -10,8 +10,8 @@ module TaskSim.PortTask exposing
   )
 
 import Json.Decode as Decode exposing (Decoder)
-import TaskSim.PortTaskInternal as T
-import TaskSim.EffectManager as EM
+import TaskEmulator.PortTaskInternal as T
+import TaskEmulator.EffectManager as EM
 
 type alias Json = Decode.Value
 

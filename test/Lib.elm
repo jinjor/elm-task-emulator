@@ -1,8 +1,8 @@
 port module Lib exposing (get10xValue)
 
-import TaskSim.PortTask as PortTask exposing (PortTask)
-import TaskSim.PortCmd as PortCmd exposing (PortCmd)
-import TaskSim.Util.Script as Script
+import TaskEmulator.PortTask as PortTask exposing (PortTask)
+import TaskEmulator.PortCmd as PortCmd exposing (PortCmd)
+import TaskEmulator.Util.Script as Script
 
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
