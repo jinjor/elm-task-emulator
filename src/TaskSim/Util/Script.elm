@@ -6,7 +6,7 @@ import Json.Encode as Encode
 
 type alias Json = Decode.Value
 
-create : (Json -> Result String Int) -> (List Json) -> String -> PortTask String Int
+create : (Json -> Result e a) -> (List Json) -> String -> PortTask e a
 create decode args script =
   PortTask.create
   ( Encode.object
