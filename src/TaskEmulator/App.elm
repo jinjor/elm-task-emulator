@@ -4,7 +4,7 @@ import Html exposing (Html)
 import Html.App as App
 
 import Json.Decode as Decode exposing (Decoder)
-
+import TaskEmulator.PortCmd as PortCmd exposing (..)
 import TaskEmulator.EffectManager as EffectManager exposing (..)
 
 type alias Json = Decode.Value
@@ -24,7 +24,6 @@ type alias Model model msg =
 type alias Input msg = ((Int, Json) -> msg) -> Sub msg
 
 type alias Output msg = (Int, Json) -> Cmd msg
-
 
 
 program :

@@ -1,19 +1,24 @@
-module TaskEmulator.PortCmd exposing (PortCmd, none)
+module TaskEmulator.PortCmd exposing (PortCmd(..), none)
 
-import TaskEmulator.EffectManager as EM exposing (EffectManager)
-import TaskEmulator.PortTask as PortTask
+import Json.Decode as Decode exposing (Decoder)
 
-type alias PortCmd msg = EM.PortCmd msg
+
+type alias Json = Decode.Value
+
+
+type PortCmd msg
+  = Simple (Cmd msg)
+  | Callback Json (Json -> PortCmd msg)
 
 
 none : PortCmd msg
-none = EM.Simple Cmd.none
+none = Simple Cmd.none
 
 
 map : (a -> b) -> PortCmd a -> PortCmd b
 map f portCmd =
   case portCmd of
-    EM.Simple cmd ->
-      EM.Simple (Cmd.map f cmd)
-    EM.Callback json toTask ->
-      EM.Callback json (PortTask.mapError f << PortTask.map f << toTask)
+    Simple cmd ->
+      Simple (Cmd.map f cmd)
+    Callback json toCmd ->
+      Callback json (map f << toCmd)

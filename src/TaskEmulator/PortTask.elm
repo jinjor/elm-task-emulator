@@ -9,37 +9,74 @@ module TaskEmulator.PortTask exposing
   , perform
   )
 
+import TaskEmulator.PortCmd exposing (..)
+import Task
 import Json.Decode as Decode exposing (Decoder)
-import TaskEmulator.PortTaskInternal as T
-import TaskEmulator.EffectManager as EM
 
 type alias Json = Decode.Value
 
-type alias PortTask e a = T.PortTask e a
+type PortTask e a
+  = Task
+    { data : Json
+    , decode : Json -> PortTask e a
+    }
+  | Succeed a
+  | Fail e
+
 
 create : Json -> (Json -> Result e a) -> PortTask e a
-create = T.create
+create data decode =
+  Task
+    { data = data
+    , decode =
+      (\j -> case decode j of
+        Ok a -> Succeed a
+        Err e -> Fail e
+      )
+    }
 
 
 succeed : a -> PortTask e a
-succeed = T.succeed
+succeed = Succeed
 
 
 fail : e -> PortTask e a
-fail = T.Fail
+fail = Fail
 
 
 map : (a -> b) -> PortTask e a -> PortTask e b
-map = T.map
+map f task =
+  case task of
+    Task { data, decode } ->
+      Task { data = data, decode = (map f) << decode }
+    Succeed a -> Succeed (f a)
+    Fail e -> Fail e
 
 
 mapError : (e1 -> e2) -> PortTask e1 a -> PortTask e2 a
-mapError = T.mapError
+mapError f task =
+  case task of
+    Task { data, decode } ->
+      Task { data = data, decode = (mapError f) << decode }
+    Succeed a -> Succeed a
+    Fail e -> Fail (f e)
 
 
 andThen : PortTask e a -> (a -> PortTask e b) -> PortTask e b
-andThen = T.andThen
+andThen task f =
+  case task of
+    Task { data, decode } ->
+      Task { data = data, decode = (flip andThen f) << decode }
+    Succeed a -> f a
+    Fail e -> Fail e
 
 
-perform : (e -> msg) -> (a -> msg) -> PortTask e a -> EM.PortCmd msg
-perform = EM.perform
+perform : (e -> msg) -> (a -> msg) -> PortTask e a -> PortCmd msg
+perform transformErr transform task =
+  case task of
+    Task { data, decode } ->
+      Callback data (perform transformErr transform << decode)
+    Succeed a ->
+      Simple (Task.perform transformErr transform (Task.succeed a))
+    Fail e ->
+      Simple (Task.perform transformErr transform (Task.fail e))

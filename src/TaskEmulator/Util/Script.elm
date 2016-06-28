@@ -1,6 +1,6 @@
 module TaskEmulator.Util.Script exposing (create)
 
-import TaskEmulator.PortTaskInternal as PortTask exposing (PortTask)
+import TaskEmulator.PortTask as PortTask exposing (PortTask)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 
