@@ -44,10 +44,6 @@ transformInput : (Int, Json) -> EffectManager msg -> (Cmd msg, EffectManager msg
 transformInput (id, json) ((Manager man) as manager) =
   case Dict.get id man.cmds of
     Just decode ->
-      let
-        (cmd, newManager) =
-          execPortCmd (decode json) manager
-      in
-        (cmd, newManager)
+      execPortCmd (decode json) manager
     Nothing ->
       (Cmd.none, manager)
