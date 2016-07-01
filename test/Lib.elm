@@ -1,4 +1,4 @@
-port module Lib exposing (get10xValue)
+module Lib exposing (get10xValue)
 
 import TaskEmulator.PortTask as PortTask exposing (PortTask)
 import TaskEmulator.PortCmd as PortCmd exposing (PortCmd)

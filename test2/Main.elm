@@ -13,7 +13,8 @@ import TaskEmulator.App as TaskEmulator
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 
-import Lib exposing (..)
+import AudioContext exposing (..)
+import AudioNode exposing (..)
 
 type alias Json = Encode.Value
 
@@ -89,13 +90,13 @@ update msg model =
           ( { model | playing = False }
           , Cmd.none
           , PortTask.perform never (always Done)
-              (exec oscillator ["stop"])
+              (stop oscillator)
           )
         (Just { oscillator }, False) ->
           ( { model | playing = True }
           , Cmd.none
           , PortTask.perform never (always Done)
-              (exec oscillator ["start"])
+              (start oscillator)
           )
         _ ->
           ( model, Cmd.none, PortCmd.none)
