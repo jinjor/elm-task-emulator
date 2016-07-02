@@ -17,7 +17,7 @@ type alias AudioContext = Types.AudioContext
 
 newAudioContext : PortTask x AudioContext
 newAudioContext =
-  ScriptUtil.new decodeContext [ "AudioContext" ]
+  ScriptUtil.new decodeContext [ "AudioContext" ] []
 
 --
 
@@ -102,4 +102,4 @@ destination (AudioContext context) =
 
 create : String -> AudioContext -> PortTask x AudioNode
 create nodeName (AudioContext context) =
-  ScriptUtil.exec decodeNode context [ "create" ++ nodeName ]
+  ScriptUtil.exec decodeNode context [ "create" ++ nodeName ] []

@@ -28,12 +28,11 @@ numberOfInputs = getInt ["numberOfInputs"]
 
 connect : AudioNode -> AudioNode -> PortTask x ()
 connect (AudioNode src) (AudioNode dest) =
-  Script.create decodeUnit [ src, dest ]
-    "var src = args[0]; var dest = args[1]; src.connect(dest); done();"
+  ScriptUtil.exec decodeUnit src ["connect"] [dest]
 
 
 disconnect : AudioNode -> PortTask x ()
-disconnect = exec ["disconnect"]
+disconnect = exec ["disconnect"] []
 
 
 
@@ -41,11 +40,11 @@ disconnect = exec ["disconnect"]
 
 
 start : AudioNode -> PortTask x ()
-start = exec ["start"]
+start = exec ["start"] []
 
 
 stop : AudioNode -> PortTask x ()
-stop = exec ["stop"]
+stop = exec ["stop"] []
 
 
 ---
@@ -80,9 +79,9 @@ setString : List String -> String -> AudioNode -> PortTask x ()
 setString = set (\s -> "'" ++ s ++ "'") -- TODO escape
 
 
-exec : List String -> AudioNode -> PortTask x ()
-exec at (AudioNode node) =
-  ScriptUtil.execUnit node at
+exec : List String -> List Json -> AudioNode -> PortTask x ()
+exec at args (AudioNode node) =
+  ScriptUtil.execUnit node at args
 
 
 --

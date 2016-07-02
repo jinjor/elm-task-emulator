@@ -13,30 +13,38 @@ import Types exposing (..)
 type alias AudioNode = Types.AudioNode
 
 
-new : (Json -> Result x a) -> List String -> PortTask x a
-new decoder at =
-  Script.create decoder [ ]
-    ("done(new " ++  String.join "." at ++ "());")
+new : (Json -> Result x a) -> List String -> List Json -> PortTask x a
+new decoder at args =
+  Script.create decoder args <| done <|
+    "new " ++ String.join "." at ++ arguments [0..(List.length args - 1)]
 
 
 get : (Json -> Result x a) -> Json -> List String -> PortTask x a
 get decoder data at =
-  Script.create decoder [ data ] <|
-    "var data = args[0]; done(data." ++ String.join "." at ++ ");"-- TODO validate
+  Script.create decoder [ data ] <| done <|
+    "args[0]." ++ String.join "." at -- TODO validate
 
 
 set : (a -> String) -> Json -> List String -> a -> PortTask x ()
 set toString data at value =
   Script.create decodeUnit [ data ] <|
-    "var data = args[0]; data." ++ String.join "." at ++ " = " ++ toString value ++ "; done();" -- TODO validate, escape
+    "args[0]." ++ String.join "." at ++ " = " ++ toString value ++ ";" ++ done "" -- TODO validate, escape
 
 
-exec : (Json -> Result x a) -> Json -> List String -> PortTask x a
-exec decoder data at =
-  Script.create decoder [ data ] <|
-    "var data = args[0]; done(data." ++ String.join "." at ++ "());"-- TODO validate
+exec : (Json -> Result x a) -> Json -> List String -> List Json -> PortTask x a
+exec decoder data at args =
+  Script.create decoder ( data :: args ) <| done <|
+    "args[0]." ++ String.join "." at ++ arguments [1..(List.length args)] -- TODO validate
 
 
+arguments : List Int -> String
+arguments indices =
+  "(" ++ String.join "," (List.map (\i -> "args[" ++ toString i ++ "]") indices) ++ ")"
+
+
+done : String -> String
+done s =
+  "done(" ++ s ++ ");"
 
 --
 
@@ -53,7 +61,7 @@ setString : Json -> List String -> String -> PortTask x ()
 setString = set (\s -> "'" ++ s ++ "'") -- TODO escape
 
 
-execUnit : Json -> List String -> PortTask x ()
+execUnit : Json -> List String -> List Json -> PortTask x ()
 execUnit = exec decodeUnit
 
 --
