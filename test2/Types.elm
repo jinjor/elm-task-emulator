@@ -45,3 +45,30 @@ decodeFloat json =
   case Decode.decodeValue Decode.float json of
     Ok v -> Ok v
     _ -> Debug.crash ("not float: " ++ toString json)
+
+
+decodeBool : Json -> Result x Bool
+decodeBool json =
+  case Decode.decodeValue Decode.bool json of
+    Ok v -> Ok v
+    _ -> Debug.crash ("not bool: " ++ toString json)
+
+
+decodeString : Json -> Result x String
+decodeString json =
+  case Decode.decodeValue Decode.string json of
+    Ok v -> Ok v
+    _ -> Debug.crash ("not string: " ++ toString json)
+
+
+
+encodeContext : AudioContext -> Json
+encodeContext (AudioContext json) = json
+
+
+encodeNode : AudioNode -> Json
+encodeNode (AudioNode json) = json
+
+
+encodeParam : AudioParam -> Json
+encodeParam (AudioParam json) = json

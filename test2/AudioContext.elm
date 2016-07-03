@@ -21,7 +21,28 @@ newAudioContext =
 
 --
 
+currentTime : AudioContext -> PortTask x Float
+currentTime context =
+  ScriptUtil.get decodeFloat (encodeContext context) [ "currentTime" ]
 
+
+destination : AudioContext -> PortTask x AudioNode
+destination context =
+  ScriptUtil.get decodeNode (encodeContext context) [ "destination" ]
+
+
+-- listener : AudioContext -> PortTask x AudioListener
+-- listener (AudioContext context) =
+--   ScriptUtil.get decodeListener context [ "listener" ]
+
+sampleRate : AudioContext -> PortTask x Float
+sampleRate context =
+  ScriptUtil.get decodeFloat (encodeContext context) [ "sampleRate" ]
+
+
+state : AudioContext -> PortTask x String
+state context =
+  ScriptUtil.get decodeString (encodeContext context) [ "state" ]
 
 
 
@@ -94,10 +115,6 @@ createPanner = create "Panner"
 createWaveShaper : AudioContext -> PortTask x AudioNode
 createWaveShaper = create "WaveShaper"
 
-
-destination : AudioContext -> PortTask x AudioNode
-destination (AudioContext context) =
-  ScriptUtil.get decodeNode context [ "destination" ]
 
 
 create : String -> AudioContext -> PortTask x AudioNode

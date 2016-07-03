@@ -25,10 +25,10 @@ get decoder data at =
     "args[0]." ++ String.join "." at -- TODO validate
 
 
-set : (a -> String) -> Json -> List String -> a -> PortTask x ()
-set toString data at value =
-  Script.create decodeUnit [ data ] <|
-    "args[0]." ++ String.join "." at ++ " = " ++ toString value ++ ";" ++ done "" -- TODO validate, escape
+set : (a -> Json) -> Json -> List String -> a -> PortTask x ()
+set encode data at value =
+  Script.create decodeUnit [ data, encode value ] <|
+    "args[0]." ++ String.join "." at ++ " = args[1];" ++ done "" -- TODO validate, escape
 
 
 exec : (Json -> Result x a) -> Json -> List String -> List Json -> PortTask x a
@@ -59,15 +59,15 @@ getFloat = get decodeFloat
 
 
 setInt : Json -> List String -> Int -> PortTask x ()
-setInt = set toString
+setInt = set Encode.int
 
 
-setFloat : Json -> List String -> Int -> PortTask x ()
-setFloat = set toString
+setFloat : Json -> List String -> Float -> PortTask x ()
+setFloat = set Encode.float
 
 
 setString : Json -> List String -> String -> PortTask x ()
-setString = set (\s -> "'" ++ s ++ "'") -- TODO escape
+setString = set Encode.string
 
 
 execUnit : Json -> List String -> List Json -> PortTask x ()
