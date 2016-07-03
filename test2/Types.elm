@@ -10,6 +10,8 @@ type AudioContext = AudioContext Json
 
 type AudioNode = AudioNode Json
 
+type AudioParam = AudioParam Json
+
 
 decodeContext : Json -> Result x AudioContext
 decodeContext node =
@@ -21,6 +23,11 @@ decodeNode node =
   Ok (AudioNode node)
 
 
+decodeParam : Json -> Result x AudioParam
+decodeParam param =
+  Ok (AudioParam param)
+
+
 decodeUnit : Json -> Result x ()
 decodeUnit _ =
   Ok ()
@@ -29,5 +36,12 @@ decodeUnit _ =
 decodeInt : Json -> Result x Int
 decodeInt json =
   case Decode.decodeValue Decode.int json of
-    Ok i -> Ok i
+    Ok v -> Ok v
     _ -> Debug.crash ("not int: " ++ toString json)
+
+
+decodeFloat : Json -> Result x Float
+decodeFloat json =
+  case Decode.decodeValue Decode.float json of
+    Ok v -> Ok v
+    _ -> Debug.crash ("not float: " ++ toString json)

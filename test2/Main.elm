@@ -70,9 +70,10 @@ update msg model =
       , PortTask.perform never Initialized
           (newAudioContext >>= \context ->
            createOscillator context >>= \oscillator ->
-           setString ["type"] "square" oscillator >>= \_ ->
-           setInt ["frequency", "value"] 442 oscillator >>= \_ ->
+           setType "square" oscillator >>= \_ ->
+           setParamValue getFrequency 442 oscillator >>= \_ ->
            createGain context >>= \gain ->
+           setParamValue getGain 0.3 gain >>= \_ ->
            destination context >>= \dest ->
            connect oscillator gain >>= \_ ->
            connect gain dest >>= \_ ->

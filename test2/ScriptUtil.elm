@@ -53,8 +53,17 @@ getInt : Json -> List String -> PortTask x Int
 getInt = get decodeInt
 
 
+getFloat : Json -> List String -> PortTask x Float
+getFloat = get decodeFloat
+
+
+
 setInt : Json -> List String -> Int -> PortTask x ()
 setInt = set toString
+
+
+setFloat : Json -> List String -> Int -> PortTask x ()
+setFloat = set toString
 
 
 setString : Json -> List String -> String -> PortTask x ()
