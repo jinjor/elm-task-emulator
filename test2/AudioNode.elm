@@ -36,7 +36,8 @@ disconnect : AudioNode -> PortTask x ()
 disconnect = exec "disconnect" []
 
 
--- AnaliserNode
+-- AnalyserNode
+
 
 getFftSize : AudioNode -> PortTask x Int
 getFftSize = getInt "fftSize"

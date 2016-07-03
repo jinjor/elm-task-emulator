@@ -22,13 +22,11 @@ newAudioContext =
 --
 
 currentTime : AudioContext -> PortTask x Float
-currentTime context =
-  ScriptUtil.get decodeFloat (encodeContext context) [ "currentTime" ]
+currentTime = getFloat "currentTime"
 
 
 destination : AudioContext -> PortTask x AudioNode
-destination context =
-  ScriptUtil.get decodeNode (encodeContext context) [ "destination" ]
+destination = getNode "destination"
 
 
 -- listener : AudioContext -> PortTask x AudioListener
@@ -36,15 +34,11 @@ destination context =
 --   ScriptUtil.get decodeListener context [ "listener" ]
 
 sampleRate : AudioContext -> PortTask x Float
-sampleRate context =
-  ScriptUtil.get decodeFloat (encodeContext context) [ "sampleRate" ]
+sampleRate = getFloat "sampleRate"
 
 
 state : AudioContext -> PortTask x String
-state context =
-  ScriptUtil.get decodeString (encodeContext context) [ "state" ]
-
-
+state = getString "state"
 
 --
 
@@ -116,7 +110,29 @@ createWaveShaper : AudioContext -> PortTask x AudioNode
 createWaveShaper = create "WaveShaper"
 
 
-
 create : String -> AudioContext -> PortTask x AudioNode
-create nodeName (AudioContext context) =
-  ScriptUtil.exec decodeNode context [ "create" ++ nodeName ] []
+create nodeName context =
+  ScriptUtil.exec decodeNode (encodeContext context) [ "create" ++ nodeName ] []
+
+
+--
+
+get : (Json -> Result x a) -> String -> AudioContext -> PortTask x a
+get decoder at context =
+  ScriptUtil.get decoder (encodeContext context) [at]
+
+
+-- getInt : String -> AudioContext -> PortTask x Int
+-- getInt = get decodeInt
+--
+--
+getFloat : String -> AudioContext -> PortTask x Float
+getFloat = get decodeFloat
+
+
+getString : String -> AudioContext -> PortTask x String
+getString = get decodeString
+
+
+getNode : String -> AudioContext -> PortTask x AudioNode
+getNode = get decodeNode
