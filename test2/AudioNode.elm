@@ -31,7 +31,7 @@ numberOfInputs = getInt "numberOfInputs"
 
 connect : AudioNode -> AudioNode -> PortTask x ()
 connect (AudioNode src) (AudioNode dest) =
-  ScriptUtil.exec decodeUnit src ["connect"] [dest]
+  ScriptUtil.exec decodeUnit src "connect" [dest]
 
 
 disconnect : AudioNode -> PortTask x ()
@@ -228,21 +228,21 @@ setMaxChannelCount = setInt "maxChannelCount"
 
 ---
 
-get : (Json -> Result x a) -> String -> AudioNode -> PortTask x a
+get : Decoder a -> String -> AudioNode -> PortTask x a
 get decoder at node =
-  ScriptUtil.get decoder (encodeNode node) [at]
+  ScriptUtil.get decoder (encodeNode node) at
 
 
 getInt : String -> AudioNode -> PortTask x Int
-getInt = get decodeInt
+getInt = get Decode.int
 
 
 getFloat : String -> AudioNode -> PortTask x Float
-getFloat = get decodeFloat
+getFloat = get Decode.float
 
 
 getBool : String -> AudioNode -> PortTask x Bool
-getBool = get decodeBool
+getBool = get Decode.bool
 
 
 getNode : String -> AudioNode -> PortTask x AudioNode
@@ -263,7 +263,7 @@ getAudioBuffer = get decodeBuffer
 
 set : (a -> Json) -> String -> a -> AudioNode -> PortTask x ()
 set encode at value node =
-  ScriptUtil.set encode (encodeNode node) [at] value
+  ScriptUtil.set encode (encodeNode node) at value
 
 
 setInt : String -> Int -> AudioNode -> PortTask x ()
@@ -288,7 +288,7 @@ setAudioBuffer = set encodeBuffer
 
 exec : String -> List Json -> AudioNode -> PortTask x ()
 exec at args node =
-  ScriptUtil.execUnit (encodeNode node) [at] args
+  ScriptUtil.exec decodeUnit (encodeNode node) at args
 
 
 setParamValue : (AudioNode -> PortTask x AudioParam) -> Float -> AudioNode -> PortTask x ()

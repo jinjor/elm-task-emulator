@@ -17,7 +17,7 @@ type alias AudioContext = Types.AudioContext
 
 newAudioContext : PortTask x AudioContext
 newAudioContext =
-  ScriptUtil.new decodeContext [ "AudioContext" ] []
+  ScriptUtil.new decodeContext "AudioContext" []
 
 --
 
@@ -45,26 +45,26 @@ state = getString "state"
 
 close : AudioContext -> PortTask x ()
 close context =
-  Script.create decodeUnit [ encodeContext context ]
-    "args[0].close().then(function() { done(); }, function(e) { throw e; } )"
+  Script.successful decodeUnit [ encodeContext context ]
+    "args[0].close().then(function() { succeed(); }, function(e) { fail(e); } )"
 
 
 decodeAudioData : ArrayBuffer -> AudioContext -> PortTask x AudioBuffer
 decodeAudioData buffer context =
-  Script.create decodeBuffer [ encodeContext context, encodeArrayBuffer buffer ]
-    "args[0].decodeAudioData(args[1]).then(function(decodedData) { done(decodedData); }, function(e) { throw e; } )"
+  Script.successful decodeBuffer [ encodeContext context, encodeArrayBuffer buffer ]
+    "args[0].decodeAudioData(args[1]).then(function(decodedData) { succeed(decodedData); }, function(e) { fail(e); } )"
 
 
 resume : AudioContext -> PortTask x ()
 resume context =
-  Script.create decodeUnit [ encodeContext context ]
-    "args[0].resume().then(function() { done(); }, function(e) { throw e; } )"
+  Script.successful decodeUnit [ encodeContext context ]
+    "args[0].resume().then(function() { succeed(); }, function(e) { fail(e); } )"
 
 
 suspend : AudioContext -> PortTask x ()
 suspend context =
-  Script.create decodeUnit [ encodeContext context ]
-    "args[0].suspend().then(function() { done(); }, function(e) { throw e; } )"
+  Script.successful decodeUnit [ encodeContext context ]
+    "args[0].suspend().then(function() { succeed(); }, function(e) { throw e; } )"
 
 
 --
@@ -144,18 +144,18 @@ createWaveShaper = create "WaveShaper"
 
 create : String -> AudioContext -> PortTask x AudioNode
 create nodeName context =
-  ScriptUtil.exec decodeNode (encodeContext context) [ "create" ++ nodeName ] []
+  ScriptUtil.exec decodeNode (encodeContext context) ("create" ++ nodeName) []
 
 
 create1 : (a -> Json) -> String -> (a -> AudioContext -> PortTask x AudioNode)
 create1 encode nodeName = \arg context ->
-  ScriptUtil.exec decodeNode (encodeContext context) [ "create" ++ nodeName ] [encode arg]
+  ScriptUtil.exec decodeNode (encodeContext context) ("create" ++ nodeName) [encode arg]
 
 --
 
-get : (Json -> Result x a) -> String -> AudioContext -> PortTask x a
+get : Decoder a -> String -> AudioContext -> PortTask x a
 get decoder at context =
-  ScriptUtil.get decoder (encodeContext context) [at]
+  ScriptUtil.get decoder (encodeContext context) at
 
 
 -- getInt : String -> AudioContext -> PortTask x Int
@@ -163,11 +163,11 @@ get decoder at context =
 --
 --
 getFloat : String -> AudioContext -> PortTask x Float
-getFloat = get decodeFloat
+getFloat = get Decode.float
 
 
 getString : String -> AudioContext -> PortTask x String
-getString = get decodeString
+getString = get Decode.string
 
 
 getNode : String -> AudioContext -> PortTask x AudioNode

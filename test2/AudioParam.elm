@@ -17,16 +17,16 @@ type alias AudioParam = Types.AudioParam
 
 getValue : AudioParam -> PortTask x Float
 getValue param =
-  ScriptUtil.get decodeFloat (encodeParam param) ["value"]
+  ScriptUtil.get Decode.float (encodeParam param) "value"
 
 
 getDefaultValue : AudioParam -> PortTask x Float
 getDefaultValue param =
-  ScriptUtil.get decodeFloat (encodeParam param) ["defaultValue"]
+  ScriptUtil.get Decode.float (encodeParam param) "defaultValue"
 
 
 setValue : Float -> AudioParam -> PortTask x ()
-setValue = setFloat ["value"]
+setValue = setFloat "value"
 
 
 setValueAtTime : Float -> Float -> AudioParam -> PortTask x ()
@@ -61,13 +61,13 @@ cancelScheduledValues startTime =
 
 exec : String -> List Json -> AudioParam -> PortTask x ()
 exec at args param =
-  ScriptUtil.execUnit (encodeParam param) [at] args
+  ScriptUtil.exec decodeUnit (encodeParam param) at args
 
 
-set : (a -> Json) -> List String -> a -> AudioParam -> PortTask x ()
-set encode at value (AudioParam param) =
-  ScriptUtil.set encode param at value
+set : (a -> Json) -> String -> a -> AudioParam -> PortTask x ()
+set encode at value param =
+  ScriptUtil.set encode (encodeParam param) at value
 
 
-setFloat : List String -> Float -> AudioParam -> PortTask x ()
+setFloat : String -> Float -> AudioParam -> PortTask x ()
 setFloat = set Encode.float

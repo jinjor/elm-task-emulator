@@ -10,6 +10,12 @@ TaskEmulator = (function() {
   }
   function eval_(value, done) {
     var args = value.args;
+    function succeed(value) {
+      done([null, value])
+    }
+    function fail(e) {
+      done([typeof e === 'undefined' ? null : e, null])
+    }
     // Note: don't add try-catch. Let it crash!
     // Errors occur only caused by external condition.
     // Other errors (aka runtime-error) should be avoided by library author.

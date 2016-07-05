@@ -53,19 +53,19 @@ copyToChannel source channelNumber startInChannel =
 
 --
 
-get : (Json -> Result x a) -> String -> AudioBuffer -> PortTask x a
+get : Decoder a -> String -> AudioBuffer -> PortTask x a
 get decoder at node =
-  ScriptUtil.get decoder (encodeBuffer node) [at]
+  ScriptUtil.get decoder (encodeBuffer node) at
 
 
 getInt : String -> AudioBuffer -> PortTask x Int
-getInt = get decodeInt
+getInt = get Decode.int
 
 
 getFloat : String -> AudioBuffer -> PortTask x Float
-getFloat = get decodeFloat
+getFloat = get Decode.float
 
 
-exec : (Json -> Result x a) -> String -> List Json -> AudioBuffer -> PortTask x a
-exec decode at args buffer =
-  ScriptUtil.exec decode (encodeBuffer buffer) [at] args
+exec : Decoder a -> String -> List Json -> AudioBuffer -> PortTask x a
+exec decoder at args buffer =
+  ScriptUtil.exec decoder (encodeBuffer buffer) at args

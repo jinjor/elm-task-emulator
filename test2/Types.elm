@@ -21,73 +21,44 @@ type ArrayBuffer = ArrayBuffer Json
 type MediaStream = MediaStream Json
 
 
-decodeContext : Json -> Result x AudioContext
-decodeContext node =
-  Ok (AudioContext node)
+decodeContext : Decoder AudioContext
+decodeContext =
+  Decode.customDecoder Decode.value (Ok << AudioContext)
 
 
-decodeNode : Json -> Result x AudioNode
-decodeNode node =
-  Ok (AudioNode node)
+decodeNode : Decoder AudioNode
+decodeNode =
+  Decode.customDecoder Decode.value (Ok << AudioNode)
 
 
-decodeParam : Json -> Result x AudioParam
-decodeParam param =
-  Ok (AudioParam param)
+decodeParam : Decoder AudioParam
+decodeParam =
+  Decode.customDecoder Decode.value (Ok << AudioParam)
 
 
-decodeBuffer : Json -> Result x AudioBuffer
-decodeBuffer buffer =
-  Ok (AudioBuffer buffer)
+decodeBuffer : Decoder AudioBuffer
+decodeBuffer =
+  Decode.customDecoder Decode.value (Ok << AudioBuffer)
 
 
-decodeFloat32Array : Json -> Result x Float32Array
-decodeFloat32Array array =
-  Ok (Float32Array array)
+decodeFloat32Array : Decoder Float32Array
+decodeFloat32Array =
+  Decode.customDecoder Decode.value (Ok << Float32Array)
 
 
-decodeArrayBuffer : Json -> Result x ArrayBuffer
-decodeArrayBuffer array =
-  Ok (ArrayBuffer array)
+decodeArrayBuffer : Decoder ArrayBuffer
+decodeArrayBuffer =
+  Decode.customDecoder Decode.value (Ok << ArrayBuffer)
 
 
-decodeMediaStream : Json -> Result x MediaStream
-decodeMediaStream stream =
-  Ok (MediaStream stream)
+decodeMediaStream : Decoder MediaStream
+decodeMediaStream =
+  Decode.customDecoder Decode.value (Ok << MediaStream)
 
 
-decodeUnit : Json -> Result x ()
-decodeUnit _ =
-  Ok ()
-
-
-decodeInt : Json -> Result x Int
-decodeInt json =
-  case Decode.decodeValue Decode.int json of
-    Ok v -> Ok v
-    _ -> Debug.crash ("not int: " ++ toString json)
-
-
-decodeFloat : Json -> Result x Float
-decodeFloat json =
-  case Decode.decodeValue Decode.float json of
-    Ok v -> Ok v
-    _ -> Debug.crash ("not float: " ++ toString json)
-
-
-decodeBool : Json -> Result x Bool
-decodeBool json =
-  case Decode.decodeValue Decode.bool json of
-    Ok v -> Ok v
-    _ -> Debug.crash ("not bool: " ++ toString json)
-
-
-decodeString : Json -> Result x String
-decodeString json =
-  case Decode.decodeValue Decode.string json of
-    Ok v -> Ok v
-    _ -> Debug.crash ("not string: " ++ toString json)
-
+decodeUnit : Decoder ()
+decodeUnit =
+  Decode.succeed ()
 
 
 ---
