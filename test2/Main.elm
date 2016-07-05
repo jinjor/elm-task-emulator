@@ -75,8 +75,8 @@ update msg model =
            createGain context >>= \gain ->
            setParamValue getGain 0.3 gain >>= \_ ->
            destination context >>= \dest ->
-           connect oscillator gain >>= \_ ->
-           connect gain dest >>= \_ ->
+           connect gain oscillator >>= \_ ->
+           connect dest gain >>= \_ ->
            PortTask.succeed (context, oscillator, gain, dest)
           )
       )
