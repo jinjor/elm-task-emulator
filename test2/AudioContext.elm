@@ -79,7 +79,7 @@ createBufferSource = create "BufferSource"
 
 
 createMediaStreamSource : MediaStream -> AudioContext -> PortTask x AudioNode
-createMediaStreamSource = create1 encodeMediaStream "MediaStreamSource"
+createMediaStreamSource = create1 "MediaStreamSource" encodeMediaStream
 
 
 createMediaStreamDestination : AudioContext -> PortTask x AudioNode
@@ -143,13 +143,13 @@ createWaveShaper = create "WaveShaper"
 
 
 create : String -> AudioContext -> PortTask x AudioNode
-create nodeName context =
-  ScriptUtil.exec decodeNode (encodeContext context) ("create" ++ nodeName) []
+create nodeName =
+  ScriptUtil.f0 encodeContext ("create" ++ nodeName) decodeNode
 
 
-create1 : (a -> Json) -> String -> (a -> AudioContext -> PortTask x AudioNode)
-create1 encode nodeName = \arg context ->
-  ScriptUtil.exec decodeNode (encodeContext context) ("create" ++ nodeName) [encode arg]
+create1 : String -> (a -> Json) -> (a -> AudioContext -> PortTask x AudioNode)
+create1 nodeName encode =
+  ScriptUtil.f1 encodeContext ("create" ++ nodeName) encode decodeNode
 
 --
 

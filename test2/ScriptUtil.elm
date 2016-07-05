@@ -1,7 +1,8 @@
 module ScriptUtil exposing
-  ( new, get, set, exec
+  ( new, get, set
   , getInt, getFloat, getBool, getString
   , setInt, setFloat, setBool, setString
+  , f0, f1, f2, f3
   )
 
 import TaskEmulator.PortTask as PortTask exposing (PortTask)
@@ -33,8 +34,29 @@ set encode data propertyName value =
     "args[0]." ++ propertyName ++ " = args[1];" ++ succeed "null" -- TODO validate, escape
 
 
-exec : Decoder a -> Json -> String -> List Json -> PortTask x a
-exec decoder data propertyName args =
+
+f0 : (obj -> Json) -> String -> Decoder a -> (obj -> PortTask x a)
+f0 encodeObj propertyName decoder = \obj ->
+  exec [] decoder (encodeObj obj) propertyName
+
+
+f1 : (obj -> Json) -> String -> (arg0 -> Json) -> Decoder a -> (arg0 -> obj -> PortTask x a)
+f1 encodeObj propertyName encode0 decoder = \arg0 obj ->
+  exec [encode0 arg0] decoder (encodeObj obj) propertyName
+
+
+f2 : (obj -> Json) -> String -> (arg0 -> Json) -> (arg1 -> Json) -> Decoder a -> (arg0 -> arg1 -> obj -> PortTask x a)
+f2 encodeObj propertyName encode0 encode1 decoder = \arg0 arg1 obj ->
+  exec [encode0 arg0, encode1 arg1] decoder (encodeObj obj) propertyName
+
+
+f3 : (obj -> Json) -> String -> (arg0 -> Json) -> (arg1 -> Json) -> (arg2 -> Json) -> Decoder a -> (arg0 -> arg1 -> arg2 -> obj -> PortTask x a)
+f3 encodeObj propertyName encode0 encode1 encode2 decoder = \arg0 arg1 arg2 obj ->
+  exec [encode0 arg0, encode1 arg1, encode2 arg2] decoder (encodeObj obj) propertyName
+
+
+exec : List Json -> Decoder a -> Json -> String -> PortTask x a
+exec args decoder data propertyName =
   Script.successful decoder ( data :: args ) <| succeed <|
     ("args[0]." ++ propertyName ++ arguments [1..(List.length args)] ++ "|| null") -- TODO validate
 

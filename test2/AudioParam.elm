@@ -30,38 +30,50 @@ setValue = setFloat "value"
 
 
 setValueAtTime : Float -> Float -> AudioParam -> PortTask x ()
-setValueAtTime value startTime =
-  exec "setValueAtTime" [Encode.float value, Encode.float startTime]
+setValueAtTime =
+  f2 "setValueAtTime" Encode.float Encode.float decodeUnit
 
 
 linearRampToValueAtTime : Float -> Float -> AudioParam -> PortTask x ()
-linearRampToValueAtTime value endTime =
-  exec "linearRampToValueAtTime" [Encode.float value, Encode.float endTime]
+linearRampToValueAtTime =
+  f2 "linearRampToValueAtTime" Encode.float Encode.float decodeUnit
 
 
 exponentialRampToValueAtTime : Float -> Float -> AudioParam -> PortTask x ()
-exponentialRampToValueAtTime value endTime =
-  exec "exponentialRampToValueAtTime" [Encode.float value, Encode.float endTime]
+exponentialRampToValueAtTime =
+  f2 "exponentialRampToValueAtTime" Encode.float Encode.float decodeUnit
 
 
 setTargetAtTime : Float -> Float -> Float -> AudioParam -> PortTask x ()
-setTargetAtTime target startTime timeConstant =
-  exec "setTargetAtTime" [Encode.float target, Encode.float startTime, Encode.float timeConstant]
+setTargetAtTime =
+  f3 "setTargetAtTime" Encode.float Encode.float Encode.float decodeUnit
 
 
 setValueCurveAtTime : Float -> Float -> Float -> AudioParam -> PortTask x ()
-setValueCurveAtTime values startTime duration =
-  exec "setValueCurveAtTime" [Encode.float values, Encode.float startTime, Encode.float duration]
+setValueCurveAtTime =
+  f3 "setValueCurveAtTime" Encode.float Encode.float Encode.float decodeUnit
 
 
 cancelScheduledValues : Float -> AudioParam -> PortTask x ()
-cancelScheduledValues startTime =
-  exec "cancelScheduledValues" [Encode.float startTime]
+cancelScheduledValues =
+  f1 "cancelScheduledValues" Encode.float decodeUnit
 
 
-exec : String -> List Json -> AudioParam -> PortTask x ()
-exec at args param =
-  ScriptUtil.exec decodeUnit (encodeParam param) at args
+f0 : String -> Decoder a -> (AudioParam -> PortTask x a)
+f0 = ScriptUtil.f0 encodeParam
+
+
+f1 : String -> (arg0 -> Json) -> Decoder a -> (arg0 -> AudioParam -> PortTask x a)
+f1 = ScriptUtil.f1 encodeParam
+
+
+f2 : String -> (arg0 -> Json) -> (arg1 -> Json) -> Decoder a -> (arg0 -> arg1 -> AudioParam -> PortTask x a)
+f2 = ScriptUtil.f2 encodeParam
+
+
+f3 : String -> (arg0 -> Json) -> (arg1 -> Json) -> (arg2 -> Json) -> Decoder a -> (arg0 -> arg1 -> arg2 -> AudioParam -> PortTask x a)
+f3 = ScriptUtil.f3 encodeParam
+
 
 
 set : (a -> Json) -> String -> a -> AudioParam -> PortTask x ()

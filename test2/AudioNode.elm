@@ -30,12 +30,11 @@ numberOfInputs = getInt "numberOfInputs"
 
 
 connect : AudioNode -> AudioNode -> PortTask x ()
-connect (AudioNode src) (AudioNode dest) =
-  ScriptUtil.exec decodeUnit src "connect" [dest]
+connect = f1 "connect" encodeNode decodeUnit
 
 
 disconnect : AudioNode -> PortTask x ()
-disconnect = exec "disconnect" []
+disconnect = f0 "disconnect" decodeUnit
 
 
 -- AnalyserNode
@@ -195,11 +194,11 @@ getGain = getParam "gain"
 
 
 start : AudioNode -> PortTask x ()
-start = exec "start" []
+start = f0 "start" decodeUnit
 
 
 stop : AudioNode -> PortTask x ()
-stop = exec "stop" []
+stop = f0 "stop" decodeUnit
 
 
 setType : String -> AudioNode -> PortTask x ()
@@ -286,9 +285,12 @@ setAudioBuffer : String -> AudioBuffer -> AudioNode -> PortTask x ()
 setAudioBuffer = set encodeBuffer
 
 
-exec : String -> List Json -> AudioNode -> PortTask x ()
-exec at args node =
-  ScriptUtil.exec decodeUnit (encodeNode node) at args
+f0 : String -> Decoder a -> (AudioNode -> PortTask x a)
+f0 = ScriptUtil.f0 encodeNode
+
+
+f1 : String -> (arg0 -> Json) -> Decoder a -> (arg0 -> AudioNode -> PortTask x a)
+f1 = ScriptUtil.f1 encodeNode
 
 
 setParamValue : (AudioNode -> PortTask x AudioParam) -> Float -> AudioNode -> PortTask x ()
