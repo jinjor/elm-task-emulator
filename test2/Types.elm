@@ -12,6 +12,14 @@ type AudioNode = AudioNode Json
 
 type AudioParam = AudioParam Json
 
+type AudioBuffer = AudioBuffer Json
+
+type Float32Array = Float32Array Json
+
+type ArrayBuffer = ArrayBuffer Json
+
+type MediaStream = MediaStream Json
+
 
 decodeContext : Json -> Result x AudioContext
 decodeContext node =
@@ -26,6 +34,26 @@ decodeNode node =
 decodeParam : Json -> Result x AudioParam
 decodeParam param =
   Ok (AudioParam param)
+
+
+decodeBuffer : Json -> Result x AudioBuffer
+decodeBuffer buffer =
+  Ok (AudioBuffer buffer)
+
+
+decodeFloat32Array : Json -> Result x Float32Array
+decodeFloat32Array array =
+  Ok (Float32Array array)
+
+
+decodeArrayBuffer : Json -> Result x ArrayBuffer
+decodeArrayBuffer array =
+  Ok (ArrayBuffer array)
+
+
+decodeMediaStream : Json -> Result x MediaStream
+decodeMediaStream stream =
+  Ok (MediaStream stream)
 
 
 decodeUnit : Json -> Result x ()
@@ -62,6 +90,8 @@ decodeString json =
 
 
 
+---
+
 encodeContext : AudioContext -> Json
 encodeContext (AudioContext json) = json
 
@@ -72,3 +102,26 @@ encodeNode (AudioNode json) = json
 
 encodeParam : AudioParam -> Json
 encodeParam (AudioParam json) = json
+
+
+encodeBuffer : AudioBuffer -> Json
+encodeBuffer (AudioBuffer json) = json
+
+
+encodeFloat32Array : Float32Array -> Json
+encodeFloat32Array (Float32Array json) = json
+
+
+encodeArrayBuffer : ArrayBuffer -> Json
+encodeArrayBuffer (ArrayBuffer json) = json
+
+
+encodeMediaStream : MediaStream -> Json
+encodeMediaStream (MediaStream json) = json
+
+
+encodeMaybe : (a -> Json) -> Maybe a -> Json
+encodeMaybe toJson maybe =
+  case maybe of
+    Just a -> toJson a
+    Nothing -> Encode.null

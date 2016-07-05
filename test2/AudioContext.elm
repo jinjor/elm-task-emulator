@@ -33,6 +33,7 @@ destination = getNode "destination"
 -- listener (AudioContext context) =
 --   ScriptUtil.get decodeListener context [ "listener" ]
 
+
 sampleRate : AudioContext -> PortTask x Float
 sampleRate = getFloat "sampleRate"
 
@@ -42,12 +43,43 @@ state = getString "state"
 
 --
 
+close : AudioContext -> PortTask x ()
+close context =
+  Script.create decodeUnit [ encodeContext context ]
+    "args[0].close().then(function() { done(); }, function(e) { throw e; } )"
+
+
+decodeAudioData : ArrayBuffer -> AudioContext -> PortTask x AudioBuffer
+decodeAudioData buffer context =
+  Script.create decodeBuffer [ encodeContext context, encodeArrayBuffer buffer ]
+    "args[0].decodeAudioData(args[1]).then(function(decodedData) { done(decodedData); }, function(e) { throw e; } )"
+
+
+resume : AudioContext -> PortTask x ()
+resume context =
+  Script.create decodeUnit [ encodeContext context ]
+    "args[0].resume().then(function() { done(); }, function(e) { throw e; } )"
+
+
+suspend : AudioContext -> PortTask x ()
+suspend context =
+  Script.create decodeUnit [ encodeContext context ]
+    "args[0].suspend().then(function() { done(); }, function(e) { throw e; } )"
+
+
+--
+
 createBufferSource : AudioContext -> PortTask x AudioNode
 createBufferSource = create "BufferSource"
 
 
-createMediaElementSource : AudioContext -> PortTask x AudioNode
-createMediaElementSource = create "MediaElementSource"
+-- Is it a good idea to createAudioNode from DOM nodes?
+-- createMediaElementSource : HTMLMediaElement -> AudioContext -> PortTask x AudioNode
+-- createMediaElementSource = create "MediaElementSource"
+
+
+createMediaStreamSource : MediaStream -> AudioContext -> PortTask x AudioNode
+createMediaStreamSource = create1 encodeMediaStream "MediaStreamSource"
 
 
 createMediaStreamDestination : AudioContext -> PortTask x AudioNode
@@ -114,6 +146,10 @@ create : String -> AudioContext -> PortTask x AudioNode
 create nodeName context =
   ScriptUtil.exec decodeNode (encodeContext context) [ "create" ++ nodeName ] []
 
+
+create1 : (a -> Json) -> String -> (a -> AudioContext -> PortTask x AudioNode)
+create1 encode nodeName = \arg context ->
+  ScriptUtil.exec decodeNode (encodeContext context) [ "create" ++ nodeName ] [encode arg]
 
 --
 

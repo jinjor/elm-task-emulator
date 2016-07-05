@@ -11,6 +11,8 @@ import Json.Encode as Encode
 import Types exposing (..)
 import ScriptUtil
 import AudioParam exposing (setValue)
+import AudioBuffer
+
 
 type alias AudioNode = Types.AudioNode
 
@@ -77,10 +79,12 @@ setSmoothingTimeConstant = setFloat "smoothingTimeConstant"
 
 -- AudioBufferSourceNode
 
+setBuffer : AudioBuffer -> AudioNode -> PortTask x ()
+setBuffer = setAudioBuffer "buffer"
 
--- getBuffer
--- setBuffer
--- (AudioBuffer)
+
+getBuffer : AudioNode -> PortTask x AudioBuffer
+getBuffer = getAudioBuffer "buffer"
 
 
 getDetune : AudioNode -> PortTask x AudioParam
@@ -123,7 +127,6 @@ getPan = getParam "pan"
 
 -- BiquadFilterNode
 
-
 -- setType (defined above)
 -- setFrequencyValue (defined above)
 -- setGainValue (defined above)
@@ -132,6 +135,20 @@ getPan = getParam "pan"
 
 getQ : AudioNode -> PortTask x AudioParam
 getQ = getParam "Q"
+
+
+-- ConvoluverNode
+
+-- setBuffer (defined above) : AudioBuffer -> AudioNode -> PortTask x ()
+-- getBuffer (defined above) : AudioNode -> PortTask x AudioBuffer
+
+
+getNormalize : AudioNode -> PortTask x Bool
+getNormalize = getBool "normalize"
+
+
+setNormalize : Bool -> AudioNode -> PortTask x ()
+setNormalize = setBool "normalize"
 
 
 -- DelayNode
@@ -198,6 +215,16 @@ getFrequency = getParam "frequency"
 
 -- AudioWorkerNode
 
+-- DestinationNode
+
+
+getMaxChannelCount : AudioNode -> PortTask x Int
+getMaxChannelCount = getInt "maxChannelCount"
+
+
+setMaxChannelCount : Int -> AudioNode -> PortTask x ()
+setMaxChannelCount = setInt "maxChannelCount"
+
 
 ---
 
@@ -230,6 +257,10 @@ getContext : String -> AudioNode -> PortTask x AudioContext
 getContext = get decodeContext
 
 
+getAudioBuffer : String -> AudioNode -> PortTask x AudioBuffer
+getAudioBuffer = get decodeBuffer
+
+
 set : (a -> Json) -> String -> a -> AudioNode -> PortTask x ()
 set encode at value node =
   ScriptUtil.set encode (encodeNode node) [at] value
@@ -249,6 +280,10 @@ setBool = set Encode.bool
 
 setString : String -> String -> AudioNode -> PortTask x ()
 setString = set Encode.string
+
+
+setAudioBuffer : String -> AudioBuffer -> AudioNode -> PortTask x ()
+setAudioBuffer = set encodeBuffer
 
 
 exec : String -> List Json -> AudioNode -> PortTask x ()
