@@ -207,7 +207,87 @@ getFrequency = get "frequency" decodeParam
 
 -- PannerNode
 
+getPanningModel : AudioNode -> PortTask x String
+getPanningModel = get "panningModel" Decode.string
+
+
+setPanningModel : String -> AudioNode -> PortTask x ()
+setPanningModel = set "panningModel" Encode.string
+
+
+getDistanceModel : AudioNode -> PortTask x String
+getDistanceModel = get "distanceModel" Decode.string
+
+
+setDistanceModel : String -> AudioNode -> PortTask x ()
+setDistanceModel = set "distanceModel" Encode.string
+
+
+getRefDistance : AudioNode -> PortTask x Float
+getRefDistance = get "refDistance" Decode.float
+
+
+setRefDistance : Float -> AudioNode -> PortTask x ()
+setRefDistance = set "refDistance" Encode.float
+
+
+getMaxDistance : AudioNode -> PortTask x Float
+getMaxDistance = get "maxDistance" Decode.float
+
+
+setMaxDistance : Float -> AudioNode -> PortTask x ()
+setMaxDistance = set "maxDistance" Encode.float
+
+
+getRolloffFactor : AudioNode -> PortTask x Float
+getRolloffFactor = get "rolloffFactor" Decode.float
+
+
+setRolloffFactor : Float -> AudioNode -> PortTask x ()
+setRolloffFactor = set "rolloffFactor" Encode.float
+
+
+getConeInnerAngle : AudioNode -> PortTask x Float
+getConeInnerAngle = get "coneInnerAngle" Decode.float
+
+
+setConeInnerAngle : Float -> AudioNode -> PortTask x ()
+setConeInnerAngle = set "coneInnerAngle" Encode.float
+
+
+getConeOuterAngle : AudioNode -> PortTask x Float
+getConeOuterAngle = get "coneOuterAngle" Decode.float
+
+
+setConeOuterAngle : Float -> AudioNode -> PortTask x ()
+setConeOuterAngle = set "coneOuterAngle" Encode.float
+
+
+getConeOuterGain : AudioNode -> PortTask x Float
+getConeOuterGain = get "coneOuterGain" Decode.float
+
+
+setConeOuterGain : Float -> AudioNode -> PortTask x ()
+setConeOuterGain = set "coneOuterGain" Encode.float
+
+
 -- WaveShaperNode
+
+
+getCurve : AudioNode -> PortTask x Float32Array
+getCurve = get "curve" decodeFloat32Array
+
+
+setCurve : Float32Array -> AudioNode -> PortTask x ()
+setCurve = set "curve" encodeFloat32Array
+
+
+getOversample : AudioNode -> PortTask x String
+getOversample = get "oversample" Decode.string
+
+
+setOversample : String -> AudioNode -> PortTask x ()
+setOversample = set "oversample" Encode.string
 
 -- AudioWorkerNode
 
