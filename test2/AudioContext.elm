@@ -19,6 +19,11 @@ newAudioContext : PortTask x AudioContext
 newAudioContext =
   ScriptUtil.new0 "AudioContext" decodeContext
 
+
+newOfflineAudioContext : Int -> Int -> Float -> PortTask x AudioContext
+newOfflineAudioContext =
+  ScriptUtil.new3 "OfflineAudioContext" Encode.int Encode.int Encode.float decodeContext
+
 --
 
 currentTime : AudioContext -> PortTask x Float
@@ -65,6 +70,17 @@ suspend : AudioContext -> PortTask x ()
 suspend context =
   Script.successful decodeUnit [ encodeContext context ]
     "args[0].suspend().then(function() { succeed(); }, function(e) { throw e; } )"
+
+
+startRendering : Decoder a -> AudioContext -> PortTask x a
+startRendering decoder context =
+  Script.successful decoder [ encodeContext context ]
+    "args[0].startRendering().then(function(e) { succeed(e); }, function(e) { throw e; } )"
+
+
+renderedBuffer : Decoder AudioBuffer
+renderedBuffer =
+  Decode.at ["renderedBuffer"] decodeBuffer
 
 
 --

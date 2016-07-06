@@ -178,9 +178,6 @@ getRelease : AudioNode -> PortTask x AudioParam
 getRelease = get "release" decodeParam
 
 
--- reduction (float)
-
-
 -- GainNode
 
 getGain : AudioNode -> PortTask x AudioParam

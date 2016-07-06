@@ -1,6 +1,6 @@
 module ScriptUtil exposing
   ( get, set
-  , new0, new1
+  , new0, new1, new2, new3
   , f0, f1, f2, f3
   )
 
@@ -19,9 +19,20 @@ new0 : String -> Decoder a -> PortTask x a
 new0 constructorName decoder =
   new decoder constructorName []
 
+
 new1 : String -> (arg0 -> Json) -> Decoder a -> (arg0 -> PortTask x a)
 new1 constructorName encode0 decoder = \arg0 ->
   new decoder constructorName [encode0 arg0]
+
+
+new2 : String -> (arg0 -> Json) -> (arg1 -> Json) -> Decoder a -> (arg0 -> arg1 -> PortTask x a)
+new2 constructorName encode0 encode1 decoder = \arg0 arg1 ->
+  new decoder constructorName [encode0 arg0, encode1 arg1]
+
+
+new3 : String -> (arg0 -> Json) -> (arg1 -> Json) -> (arg2 -> Json) -> Decoder a -> (arg0 -> arg1 -> arg2 -> PortTask x a)
+new3 constructorName encode0 encode1 encode2 decoder = \arg0 arg1 arg2 ->
+  new decoder constructorName [encode0 arg0, encode1 arg1, encode2 arg2]
 
 
 new : Decoder a -> String -> List Json -> PortTask x a
