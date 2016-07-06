@@ -16,19 +16,19 @@ type alias AudioBuffer = Types.AudioBuffer
 
 
 getSampleRate : AudioBuffer -> PortTask x Float
-getSampleRate = getFloat "sampleRate"
+getSampleRate = get "sampleRate" Decode.float
 
 
 getLength : AudioBuffer -> PortTask x Int
-getLength = getInt "length"
+getLength = get "length" Decode.int
 
 
 getDuration : AudioBuffer -> PortTask x Float
-getDuration = getFloat "duration"
+getDuration = get "duration" Decode.float
 
 
 getNumberOfChannels : AudioBuffer -> PortTask x Int
-getNumberOfChannels = getInt "numberOfChannels"
+getNumberOfChannels = get "numberOfChannels" Decode.int
 
 
 -- TODO out of range
@@ -49,18 +49,8 @@ copyToChannel =
 
 --
 
-get : Decoder a -> String -> AudioBuffer -> PortTask x a
-get decoder at node =
-  ScriptUtil.get decoder (encodeBuffer node) at
-
-
-getInt : String -> AudioBuffer -> PortTask x Int
-getInt = get Decode.int
-
-
-getFloat : String -> AudioBuffer -> PortTask x Float
-getFloat = get Decode.float
-
+get : String -> Decoder a -> AudioBuffer -> PortTask x a
+get = ScriptUtil.get encodeBuffer
 
 
 f0 : String -> Decoder a -> (AudioBuffer -> PortTask x a)

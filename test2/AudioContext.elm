@@ -17,16 +17,16 @@ type alias AudioContext = Types.AudioContext
 
 newAudioContext : PortTask x AudioContext
 newAudioContext =
-  ScriptUtil.new decodeContext "AudioContext" []
+  ScriptUtil.new0 "AudioContext" decodeContext
 
 --
 
 currentTime : AudioContext -> PortTask x Float
-currentTime = getFloat "currentTime"
+currentTime = get "currentTime" Decode.float
 
 
 destination : AudioContext -> PortTask x AudioNode
-destination = getNode "destination"
+destination = get "destination" decodeNode
 
 
 -- listener : AudioContext -> PortTask x AudioListener
@@ -35,11 +35,11 @@ destination = getNode "destination"
 
 
 sampleRate : AudioContext -> PortTask x Float
-sampleRate = getFloat "sampleRate"
+sampleRate = get "sampleRate" Decode.float
 
 
 state : AudioContext -> PortTask x String
-state = getString "state"
+state = get "state" Decode.string
 
 --
 
@@ -153,22 +153,5 @@ create1 nodeName encode =
 
 --
 
-get : Decoder a -> String -> AudioContext -> PortTask x a
-get decoder at context =
-  ScriptUtil.get decoder (encodeContext context) at
-
-
--- getInt : String -> AudioContext -> PortTask x Int
--- getInt = get decodeInt
---
---
-getFloat : String -> AudioContext -> PortTask x Float
-getFloat = get Decode.float
-
-
-getString : String -> AudioContext -> PortTask x String
-getString = get Decode.string
-
-
-getNode : String -> AudioContext -> PortTask x AudioNode
-getNode = get decodeNode
+get : String -> Decoder a -> AudioContext -> PortTask x a
+get = ScriptUtil.get encodeContext

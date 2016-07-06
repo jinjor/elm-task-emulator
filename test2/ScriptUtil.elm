@@ -1,7 +1,6 @@
 module ScriptUtil exposing
-  ( new, get, set
-  , getInt, getFloat, getBool, getString
-  , setInt, setFloat, setBool, setString
+  ( get, set
+  , new0, new1
   , f0, f1, f2, f3
   )
 
@@ -16,23 +15,31 @@ import Json.Encode as Encode
 type alias Json = Decode.Value
 
 
+new0 : String -> Decoder a -> PortTask x a
+new0 constructorName decoder =
+  new decoder constructorName []
+
+new1 : String -> (arg0 -> Json) -> Decoder a -> (arg0 -> PortTask x a)
+new1 constructorName encode0 decoder = \arg0 ->
+  new decoder constructorName [encode0 arg0]
+
+
 new : Decoder a -> String -> List Json -> PortTask x a
 new decoder constructorName args =
   Script.successful decoder args <| succeed <|
     "new " ++ constructorName ++ arguments [0..(List.length args - 1)]
 
 
-get : Decoder a -> Json -> String -> PortTask x a
-get decoder data propertyName =
-  Script.successful decoder [ data ] <| succeed <|
+get : (obj -> Json) -> String -> Decoder a -> obj -> PortTask x a
+get encodeObj propertyName decoder = \obj ->
+  Script.successful decoder [ encodeObj obj ] <| succeed <|
     "args[0]." ++ propertyName
 
 
-set : (a -> Json) -> Json -> String -> a -> PortTask x ()
-set encode data propertyName value =
-  Script.successful (Decode.null ()) [ data, encode value ] <|
+set : (obj -> Json) -> String -> (a -> Json) -> a -> obj -> PortTask x ()
+set encodeObj propertyName encode = \value obj ->
+  Script.successful (Decode.null ()) [ encodeObj obj, encode value ] <|
     "args[0]." ++ propertyName ++ " = args[1];" ++ succeed "null" -- TODO validate, escape
-
 
 
 f0 : (obj -> Json) -> String -> Decoder a -> (obj -> PortTask x a)
@@ -74,41 +81,6 @@ succeed s =
 fail : String -> String
 fail s =
   "fail(" ++ s ++ ");"
-
---
-
-
-getInt : Json -> String -> PortTask x Int
-getInt = get Decode.int
-
-
-getFloat : Json -> String -> PortTask x Float
-getFloat = get Decode.float
-
-
-getBool : Json -> String -> PortTask x Bool
-getBool = get Decode.bool
-
-
-getString : Json -> String -> PortTask x String
-getString = get Decode.string
-
-
-setInt : Json -> String -> Int -> PortTask x ()
-setInt = set Encode.int
-
-
-setFloat : Json -> String -> Float -> PortTask x ()
-setFloat = set Encode.float
-
-
-setBool : Json -> String -> Bool -> PortTask x ()
-setBool = set Encode.bool
-
-
-setString : Json -> String -> String -> PortTask x ()
-setString = set Encode.string
-
 
 
 --

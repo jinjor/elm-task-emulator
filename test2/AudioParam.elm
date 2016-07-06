@@ -16,17 +16,15 @@ type alias AudioParam = Types.AudioParam
 
 
 getValue : AudioParam -> PortTask x Float
-getValue param =
-  ScriptUtil.get Decode.float (encodeParam param) "value"
+getValue = get "value" Decode.float
 
 
 getDefaultValue : AudioParam -> PortTask x Float
-getDefaultValue param =
-  ScriptUtil.get Decode.float (encodeParam param) "defaultValue"
+getDefaultValue = get "defaultValue" Decode.float
 
 
 setValue : Float -> AudioParam -> PortTask x ()
-setValue = setFloat "value"
+setValue = set "value" Encode.float
 
 
 setValueAtTime : Float -> Float -> AudioParam -> PortTask x ()
@@ -75,11 +73,9 @@ f3 : String -> (arg0 -> Json) -> (arg1 -> Json) -> (arg2 -> Json) -> Decoder a -
 f3 = ScriptUtil.f3 encodeParam
 
 
-
-set : (a -> Json) -> String -> a -> AudioParam -> PortTask x ()
-set encode at value param =
-  ScriptUtil.set encode (encodeParam param) at value
+get : String -> Decoder a -> AudioParam -> PortTask x a
+get = ScriptUtil.get encodeParam
 
 
-setFloat : String -> Float -> AudioParam -> PortTask x ()
-setFloat = set Encode.float
+set : String -> (a -> Json) -> a -> AudioParam -> PortTask x ()
+set = ScriptUtil.set encodeParam

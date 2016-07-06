@@ -18,15 +18,15 @@ type alias AudioNode = Types.AudioNode
 
 
 context : AudioNode -> PortTask x AudioContext
-context = getContext "context"
+context = get "context" decodeContext
 
 
 numberOfOutputs : AudioNode -> PortTask x Int
-numberOfOutputs = getInt "numberOfOutputs"
+numberOfOutputs = get "numberOfOutputs" Decode.int
 
 
 numberOfInputs : AudioNode -> PortTask x Int
-numberOfInputs = getInt "numberOfInputs"
+numberOfInputs = get "numberOfInputs" Decode.int
 
 
 connect : AudioNode -> AudioNode -> PortTask x ()
@@ -41,87 +41,87 @@ disconnect = f0 "disconnect" decodeUnit
 
 
 getFftSize : AudioNode -> PortTask x Int
-getFftSize = getInt "fftSize"
+getFftSize = get "fftSize" Decode.int
 
 
 setFftSize : Int -> AudioNode -> PortTask x ()
-setFftSize = setInt "fftSize"
+setFftSize = set "fftSize" Encode.int
 
 
 getFrequencyBinCount : AudioNode -> PortTask x Int
-getFrequencyBinCount = getInt "frequencyBinCount"
+getFrequencyBinCount = get "frequencyBinCount" Decode.int
 
 
 getMinDecibels : AudioNode -> PortTask x Float
-getMinDecibels = getFloat "minDecibels"
+getMinDecibels = get "minDecibels" Decode.float
 
 
 setMinDecibels : Float -> AudioNode -> PortTask x ()
-setMinDecibels = setFloat "minDecibels"
+setMinDecibels = set "minDecibels" Encode.float
 
 
 getMaxDecibels : AudioNode -> PortTask x Float
-getMaxDecibels = getFloat "maxDecibels"
+getMaxDecibels = get "maxDecibels" Decode.float
 
 
 setMaxDecibels : Float -> AudioNode -> PortTask x ()
-setMaxDecibels = setFloat "maxDecibels"
+setMaxDecibels = set "maxDecibels" Encode.float
 
 
 getSmoothingTimeConstant : AudioNode -> PortTask x Float
-getSmoothingTimeConstant = getFloat "smoothingTimeConstant"
+getSmoothingTimeConstant = get "smoothingTimeConstant" Decode.float
 
 
 setSmoothingTimeConstant : Float -> AudioNode -> PortTask x ()
-setSmoothingTimeConstant = setFloat "smoothingTimeConstant"
+setSmoothingTimeConstant = set "smoothingTimeConstant" Encode.float
 
 
 -- AudioBufferSourceNode
 
 setBuffer : AudioBuffer -> AudioNode -> PortTask x ()
-setBuffer = setAudioBuffer "buffer"
+setBuffer = set "buffer" encodeBuffer
 
 
 getBuffer : AudioNode -> PortTask x AudioBuffer
-getBuffer = getAudioBuffer "buffer"
+getBuffer = get "buffer" decodeBuffer
 
 
 getDetune : AudioNode -> PortTask x AudioParam
-getDetune = getParam "detune"
+getDetune = get "detune" decodeParam
 
 
 getLoop : AudioNode -> PortTask x Bool
-getLoop = getBool "loop"
+getLoop = get "loop" Decode.bool
 
 
 setLoop : Bool -> AudioNode -> PortTask x ()
-setLoop = setBool "loop"
+setLoop = set "loop" Encode.bool
 
 
 getLoopStart : AudioNode -> PortTask x Float
-getLoopStart = getFloat "loopStart"
+getLoopStart = get "loopStart" Decode.float
 
 
 setLoopStart : Float -> AudioNode -> PortTask x ()
-setLoopStart = setFloat "loopStart"
+setLoopStart = set "loopStart" Encode.float
 
 
 getLoopEnd : AudioNode -> PortTask x Float
-getLoopEnd = getFloat "loopEnd"
+getLoopEnd = get "loopEnd" Decode.float
 
 
 setLoopEnd : Float -> AudioNode -> PortTask x ()
-setLoopEnd = setFloat "loopEnd"
+setLoopEnd = set "loopEnd" Encode.float
 
 
 getPlaybackRate : AudioNode -> PortTask x AudioParam
-getPlaybackRate = getParam "playbackRate"
+getPlaybackRate = get "playbackRate" decodeParam
 
 
 -- StereoPannerNode
 
 getPan : AudioNode -> PortTask x AudioParam
-getPan = getParam "pan"
+getPan = get "pan" decodeParam
 
 
 -- BiquadFilterNode
@@ -133,7 +133,7 @@ getPan = getParam "pan"
 
 
 getQ : AudioNode -> PortTask x AudioParam
-getQ = getParam "Q"
+getQ = get "Q" decodeParam
 
 
 -- ConvoluverNode
@@ -143,39 +143,39 @@ getQ = getParam "Q"
 
 
 getNormalize : AudioNode -> PortTask x Bool
-getNormalize = getBool "normalize"
+getNormalize = get "normalize" Decode.bool
 
 
 setNormalize : Bool -> AudioNode -> PortTask x ()
-setNormalize = setBool "normalize"
+setNormalize = set "normalize" Encode.bool
 
 
 -- DelayNode
 
 getDelayTime : AudioNode -> PortTask x AudioParam
-getDelayTime = getParam "delayTime"
+getDelayTime = get "delayTime" decodeParam
 
 
 -- DynamicsCompressorNode
 
 getThreshold : AudioNode -> PortTask x AudioParam
-getThreshold = getParam "threshold"
+getThreshold = get "threshold" decodeParam
 
 
 getKnee : AudioNode -> PortTask x AudioParam
-getKnee = getParam "knee"
+getKnee = get "knee" decodeParam
 
 
 getRatio : AudioNode -> PortTask x AudioParam
-getRatio = getParam "ratio"
+getRatio = get "ratio" decodeParam
 
 
 getAttack : AudioNode -> PortTask x AudioParam
-getAttack = getParam "attack"
+getAttack = get "attack" decodeParam
 
 
 getRelease : AudioNode -> PortTask x AudioParam
-getRelease = getParam "release"
+getRelease = get "release" decodeParam
 
 
 -- reduction (float)
@@ -184,7 +184,7 @@ getRelease = getParam "release"
 -- GainNode
 
 getGain : AudioNode -> PortTask x AudioParam
-getGain = getParam "gain"
+getGain = get "gain" decodeParam
 
 
 -- IIRFilterNode
@@ -202,11 +202,11 @@ stop = f0 "stop" decodeUnit
 
 
 setType : String -> AudioNode -> PortTask x ()
-setType = setString "type"
+setType = set "type" Encode.string
 
 
 getFrequency : AudioNode -> PortTask x AudioParam
-getFrequency = getParam "frequency"
+getFrequency = get "frequency" decodeParam
 
 -- PannerNode
 
@@ -218,71 +218,21 @@ getFrequency = getParam "frequency"
 
 
 getMaxChannelCount : AudioNode -> PortTask x Int
-getMaxChannelCount = getInt "maxChannelCount"
+getMaxChannelCount = get "maxChannelCount" Decode.int
 
 
 setMaxChannelCount : Int -> AudioNode -> PortTask x ()
-setMaxChannelCount = setInt "maxChannelCount"
+setMaxChannelCount = set "maxChannelCount" Encode.int
 
 
 ---
 
-get : Decoder a -> String -> AudioNode -> PortTask x a
-get decoder at node =
-  ScriptUtil.get decoder (encodeNode node) at
+get : String -> Decoder a -> AudioNode -> PortTask x a
+get = ScriptUtil.get encodeNode
 
 
-getInt : String -> AudioNode -> PortTask x Int
-getInt = get Decode.int
-
-
-getFloat : String -> AudioNode -> PortTask x Float
-getFloat = get Decode.float
-
-
-getBool : String -> AudioNode -> PortTask x Bool
-getBool = get Decode.bool
-
-
-getNode : String -> AudioNode -> PortTask x AudioNode
-getNode = get decodeNode
-
-
-getParam : String -> AudioNode -> PortTask x AudioParam
-getParam = get decodeParam
-
-
-getContext : String -> AudioNode -> PortTask x AudioContext
-getContext = get decodeContext
-
-
-getAudioBuffer : String -> AudioNode -> PortTask x AudioBuffer
-getAudioBuffer = get decodeBuffer
-
-
-set : (a -> Json) -> String -> a -> AudioNode -> PortTask x ()
-set encode at value node =
-  ScriptUtil.set encode (encodeNode node) at value
-
-
-setInt : String -> Int -> AudioNode -> PortTask x ()
-setInt = set Encode.int
-
-
-setFloat : String -> Float -> AudioNode -> PortTask x ()
-setFloat = set Encode.float
-
-
-setBool : String -> Bool -> AudioNode -> PortTask x ()
-setBool = set Encode.bool
-
-
-setString : String -> String -> AudioNode -> PortTask x ()
-setString = set Encode.string
-
-
-setAudioBuffer : String -> AudioBuffer -> AudioNode -> PortTask x ()
-setAudioBuffer = set encodeBuffer
+set : String -> (a -> Json) -> a -> AudioNode -> PortTask x ()
+set = ScriptUtil.set encodeNode
 
 
 f0 : String -> Decoder a -> (AudioNode -> PortTask x a)
