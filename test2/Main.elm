@@ -107,12 +107,12 @@ update msg model =
           case model.nodes of
             Just { oscillator, gain, destination } ->
               PortTask.perform never Info
-                ( numberOfInputs oscillator >>= \inputs1 ->
-                  numberOfOutputs oscillator >>= \outputs1 ->
-                  numberOfInputs gain >>= \inputs2 ->
-                  numberOfOutputs gain >>= \outputs2 ->
-                  numberOfInputs destination >>= \inputs3 ->
-                  numberOfOutputs destination >>= \outputs3 ->
+                ( getNumberOfInputs oscillator >>= \inputs1 ->
+                  getNumberOfOutputs oscillator >>= \outputs1 ->
+                  getNumberOfInputs gain >>= \inputs2 ->
+                  getNumberOfOutputs gain >>= \outputs2 ->
+                  getNumberOfInputs destination >>= \inputs3 ->
+                  getNumberOfOutputs destination >>= \outputs3 ->
                   PortTask.succeed
                     ( "oscillator: " ++ toString inputs1 ++ ", " ++ toString outputs1 ++ "\n" ++
                       "gain: " ++ toString inputs2 ++ ", " ++ toString outputs2 ++ "\n" ++

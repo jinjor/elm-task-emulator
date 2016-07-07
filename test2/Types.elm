@@ -20,6 +20,8 @@ type ArrayBuffer = ArrayBuffer Json
 
 type MediaStream = MediaStream Json
 
+type PeriodicWave = PeriodicWave Json
+
 
 decodeContext : Decoder AudioContext
 decodeContext =
@@ -56,6 +58,11 @@ decodeMediaStream =
   Decode.customDecoder Decode.value (Ok << MediaStream)
 
 
+decodePeriodicWave : Decoder PeriodicWave
+decodePeriodicWave =
+  Decode.customDecoder Decode.value (Ok << PeriodicWave)
+
+
 decodeUnit : Decoder ()
 decodeUnit =
   Decode.succeed ()
@@ -89,6 +96,10 @@ encodeArrayBuffer (ArrayBuffer json) = json
 
 encodeMediaStream : MediaStream -> Json
 encodeMediaStream (MediaStream json) = json
+
+
+encodePeriodicWave : PeriodicWave -> Json
+encodePeriodicWave (PeriodicWave json) = json
 
 
 encodeMaybe : (a -> Json) -> Maybe a -> Json

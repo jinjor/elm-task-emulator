@@ -17,20 +17,48 @@ import AudioBuffer
 type alias AudioNode = Types.AudioNode
 
 
-context : AudioNode -> PortTask x AudioContext
-context = get "context" decodeContext
+getContext : AudioNode -> PortTask x AudioContext
+getContext = get "context" decodeContext
 
 
-numberOfOutputs : AudioNode -> PortTask x Int
-numberOfOutputs = get "numberOfOutputs" Decode.int
+getNumberOfInputs : AudioNode -> PortTask x Int
+getNumberOfInputs = get "numberOfInputs" Decode.int
 
 
-numberOfInputs : AudioNode -> PortTask x Int
-numberOfInputs = get "numberOfInputs" Decode.int
+getNumberOfOutputs : AudioNode -> PortTask x Int
+getNumberOfOutputs = get "numberOfOutputs" Decode.int
+
+
+getChannelCount : AudioNode -> PortTask x Int
+getChannelCount = get "channelCount" Decode.int
+
+
+setChannelCount : Int -> AudioNode -> PortTask x ()
+setChannelCount = set "channelCount" Encode.int
+
+
+getChannelCountMode : AudioNode -> PortTask x String
+getChannelCountMode = get "channelCountMode" Decode.string
+
+
+setChannelCountMode : String -> AudioNode -> PortTask x ()
+setChannelCountMode = set "channelCountMode" Encode.string
+
+
+getChannelInterpretation : AudioNode -> PortTask x String
+getChannelInterpretation = get "channelInterpretation" Decode.string
+
+
+setChannelInterpretation : String -> AudioNode -> PortTask x ()
+setChannelInterpretation = set "channelInterpretation" Encode.string
 
 
 connect : AudioNode -> AudioNode -> PortTask x ()
 connect = f1 "connect" encodeNode decodeUnit
+
+
+connectToParam : AudioParam -> AudioNode -> PortTask x ()
+connectToParam = f1 "connect" encodeParam decodeUnit
 
 
 disconnect : AudioNode -> PortTask x ()
@@ -90,6 +118,10 @@ getDetune : AudioNode -> PortTask x AudioParam
 getDetune = get "detune" decodeParam
 
 
+setDetune : AudioParam -> AudioNode -> PortTask x ()
+setDetune = set "detune" encodeParam
+
+
 getLoop : AudioNode -> PortTask x Bool
 getLoop = get "loop" Decode.bool
 
@@ -126,14 +158,23 @@ getPan = get "pan" decodeParam
 
 -- BiquadFilterNode
 
--- setType (defined above)
--- setFrequencyValue (defined above)
--- setGainValue (defined above)
--- getDetune (defined above)
+-- getFrequency (defined above)
+-- setFrequency (defined above)
 
+-- getDetune (defined above)
+-- setDetune (defined above)
 
 getQ : AudioNode -> PortTask x AudioParam
 getQ = get "Q" decodeParam
+
+
+setQ : AudioParam -> AudioNode -> PortTask x ()
+setQ = set "Q" encodeParam
+
+-- getGain (defined above)
+
+-- getType (defined above)
+-- setType (defined above)
 
 
 -- ConvoluverNode
@@ -189,6 +230,26 @@ getGain = get "gain" decodeParam
 
 -- OscillatorNode
 
+getFrequency : AudioNode -> PortTask x AudioParam
+getFrequency = get "frequency" decodeParam
+
+
+setFrequency : AudioParam -> AudioNode -> PortTask x ()
+setFrequency = set "frequency" encodeParam
+
+
+getType : AudioNode -> PortTask x String
+getType = get "type" Decode.string
+
+
+setType : String -> AudioNode -> PortTask x ()
+setType = set "type" Encode.string
+
+
+-- getDetune (defined above) : AudioNode -> PortTask x AudioParam
+
+-- setDetune (defined above) : AudioParam -> AudioNode -> PortTask x ()
+
 
 start : AudioNode -> PortTask x ()
 start = f0 "start" decodeUnit
@@ -198,12 +259,10 @@ stop : AudioNode -> PortTask x ()
 stop = f0 "stop" decodeUnit
 
 
-setType : String -> AudioNode -> PortTask x ()
-setType = set "type" Encode.string
+setPeriodicWave : PeriodicWave -> AudioNode -> PortTask x ()
+setPeriodicWave = f1 "setPeriodicWave" encodePeriodicWave decodeUnit
 
 
-getFrequency : AudioNode -> PortTask x AudioParam
-getFrequency = get "frequency" decodeParam
 
 -- PannerNode
 

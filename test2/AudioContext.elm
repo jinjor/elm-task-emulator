@@ -83,6 +83,11 @@ renderedBuffer =
   Decode.at ["renderedBuffer"] decodeBuffer
 
 
+createPeriodicWave : Float32Array -> Float32Array -> Maybe String -> AudioContext -> PortTask x PeriodicWave
+createPeriodicWave = f3 "createPeriodicWave"
+  encodeFloat32Array encodeFloat32Array (encodeMaybe Encode.string) decodePeriodicWave
+
+
 --
 
 createBufferSource : AudioContext -> PortTask x AudioNode
@@ -171,3 +176,7 @@ create1 nodeName encode =
 
 get : String -> Decoder a -> AudioContext -> PortTask x a
 get = ScriptUtil.get encodeContext
+
+
+f3 : String -> (arg0 -> Json) -> (arg1 -> Json) -> (arg2 -> Json) -> Decoder a -> (arg0 -> arg1 -> arg2 -> AudioContext -> PortTask x a)
+f3 = ScriptUtil.f3 encodeContext
